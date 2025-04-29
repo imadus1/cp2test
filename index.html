@@ -1,821 +1,91 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solutions des Exemples - Tenseur d'Inertie</title>
-    <script>
-        MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true
-          },
-          svg: {
-            fontCache: 'global'
-          }
-        };
-        </script>
-    <script type="text/javascript" id="MathJax-script" async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    <title>Pappus's Second Theorem Visualization</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Import maps for Three.js modules (use CDN links) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+            }
+        }
     </script>
-    <style>
-        body {
-            font-family: sans-serif;
-            line-height: 1.3; /* Reduced line spacing */
-            margin: 2em;
-        }
-        h1, h2, h3 {
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-        }
-        p, li {
-            margin-top: 0.3em;
-            margin-bottom: 0.3em;
-        }
-        figure {
-            text-align: center;
-            margin: 2em 0;
-        }
-        figcaption {
-            margin-top: 0.5em;
-            font-style: italic;
-            font-size: 0.9em;
-        }
-        img {
-            max-width: 80%;
-            height: auto;
-        }
-        ul {
-            padding-left: 20px;
-        }
-        strong {
-            font-weight: bold;
-        }
-        .figure-title {
-            text-align: center;
-            font-weight: bold;
-        }
-        /* Style for vertical vectors/points */
-        .vector {
-            display: inline-block;
-            text-align: center;
-            vertical-align: middle;
-            margin: 0 0.2em;
-        }
-        .vector span {
-            display: block;
-        }
-        /* Ensure math expressions are not too small */
-        .mjx-chtml {
-           font-size: 105%; /* Slightly larger math font */
-        }
-        /* Ensure display math takes space */
-         mjx-container[display="true"] {
-            display: block;
-            margin-top: 1em;
-            margin-bottom: 1em;
-        }
-    </style>
 </head>
 <body>
-
-    <h1>Solutions des Exemples</h1>
-
-    <h2 class="figure-title">Figure 1.1 : Tige centrée en O sur l'axe OX</h2>
-
-    <figure>
-        <img src="figure1.png" alt="Tige centrée en O sur l'axe OX">
-        <figcaption>FIGURE 1 - Tige centrée en O sur l'axe OX</figcaption>
-    </figure>
-
-    <p><strong>Méthode requise :</strong> Calcul direct.</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Matrice d'inertie :</strong> C'est une matrice symétrique \( [I_O] \) qui décrit comment la masse d'un solide est distribuée par rapport à un point O et comment elle résiste à la rotation autour des axes passant par ce point. Elle dépend du point O et de la base choisie.</li>
-        <li><strong>Composantes :</strong> La matrice d'inertie dans une base \( (O, \vec{i}, \vec{j}, \vec{k}) \) est donnée par :
-            \[ [I_O] = \begin{pmatrix} A & -D & -E \\ -D & B & -F \\ -E & -F & C \end{pmatrix} \]
-            <p>où A, B, C sont les <strong>moments d'inertie</strong> par rapport aux axes Ox, Oy, Oz et D, E, F sont les <strong>produits d'inertie</strong> par rapport aux plans. Ils sont définis par les intégrales sur le volume (ou la surface, ou la ligne) du solide (S) :</p>
-            <p>\( A = I_{xx} \)</p>
-            \[ A = \int_{(S)} (y^2 + z^2) dm \quad \text{(Moment d'inertie / Ox)} \]
-            <p>\( B = I_{yy} \)</p>
-            \[ B = \int_{(S)} (x^2 + z^2) dm \quad \text{(Moment d'inertie / Oy)} \]
-            <p>\( C = I_{zz} \)</p>
-            \[ C = \int_{(S)} (x^2 + y^2) dm \quad \text{(Moment d'inertie / Oz)} \]
-            <p>\( D = I_{xy} \)</p>
-            \[ D = \int_{(S)} xy \, dm \quad \text{(Produit d'inertie / plan z=0)} \]
-            <p>\( E = I_{xz} \)</p>
-            \[ E = \int_{(S)} xz \, dm \quad \text{(Produit d'inertie / plan y=0)} \]
-            <p>\( F = I_{yz} \)</p>
-            \[ F = \int_{(S)} yz \, dm \quad \text{(Produit d'inertie / plan x=0)} \]
-        </li>
-    </ul>
-
-    <hr>
-
-    <p><strong>Note:</strong> La convention de signe (-D, -E, -F) est courante en mécanique.</p>
-    <p><strong>Corps linéique:</strong> Modélisation où la masse est répartie le long d'une courbe (1D). L'élément de masse \( dm \) est lié à l'élément de longueur \( dl \) par la densité linéique \( \lambda \) :</p>
-    \[ dm = \lambda dl \]
-    <p><strong>Symétrie:</strong> La symétrie matérielle simplifie le calcul. Si un plan de coordonnées (ex : z = 0) est un plan de symétrie matérielle, les produits d'inertie impliquant la coordonnée perpendiculaire (ici \( E = I_{xz} \) et \( F = I_{yz} \)) sont nuls. Si un axe de coordonnées est un axe de symétrie, les trois produits d'inertie sont nuls. Ici, la tige est sur l'axe OX. Cela implique une symétrie de révolution autour de OX (pour une tige infiniment fine) mais surtout que \( y = 0 \) et \( z = 0 \) pour tous les points de la tige.</p>
-
-    <h2>Géométrie et Paramétrisation :</h2>
-    <ul>
-        <li>Segment de droite sur l'axe OX, de \( x = -\frac{L}{2} \) à \( x = +\frac{L}{2} \).</li>
-        <li>Un point P du segment a pour coordonnées :
-            \[ P = \begin{pmatrix} x \\ 0 \\ 0 \end{pmatrix}, \quad \text{avec } x \in \left[ -\frac{L}{2}, \frac{L}{2} \right] \]
-        </li>
-        <li>Élément de longueur :
-            \[ dl = dx \]
-        </li>
-        <li>Élément de masse (densité \( \lambda \) constante supposée) :
-            \[ dm = \lambda dx \]
-        </li>
-        <li>Masse totale :
-            \[ M = \int_{-L/2}^{L/2} \lambda dx \]
-            \[ M = \lambda [x]_{-L/2}^{L/2} \]
-            \[ M = \lambda \left( \frac{L}{2} - \left(-\frac{L}{2}\right) \right) \]
-            \[ M = \lambda L \]
-        </li>
-    </ul>
-
-    <h2>Calcul des termes du tenseur :</h2>
-    <p>Pour tout point P de la tige, \( y = 0 \) and \( z = 0 \).</p>
-    <ul>
-        <li><strong>Calcul de A:</strong>
-            \[ A = \int_{-L/2}^{L/2} (y^2 + z^2) dm \]
-            \[ A = \int_{-L/2}^{L/2} (0^2 + 0^2) \lambda dx \]
-            \[ A = 0 \]
-        </li>
-        <li><strong>Calcul de B:</strong>
-            \[ B = \int_{-L/2}^{L/2} (x^2 + z^2) dm \]
-            \[ B = \int_{-L/2}^{L/2} (x^2 + 0^2) \lambda dx \]
-            \[ B = \lambda \int_{-L/2}^{L/2} x^2 dx \]
-            \[ B = \lambda \left[ \frac{x^3}{3} \right]_{-L/2}^{L/2} \]
-            \[ B = \lambda \left( \frac{(L/2)^3}{3} - \frac{(-L/2)^3}{3} \right) \]
-            \[ B = \lambda \left( \frac{L^3}{24} - \left(-\frac{L^3}{24}\right) \right) \]
-            \[ B = \lambda \left( \frac{L^3}{24} + \frac{L^3}{24} \right) \]
-            \[ B = \lambda \frac{L^3}{12} \]
-            <p><strong>En fonction de \( M = \lambda L \):</strong></p>
-            \[ B = \frac{(\lambda L) L^2}{12} \]
-            \[ B = \frac{M L^2}{12} \]
-        </li>
-        <li><strong>Calcul de C:</strong>
-            \[ C = \int_{-L/2}^{L/2} (x^2 + y^2) dm \]
-            \[ C = \int_{-L/2}^{L/2} (x^2 + 0^2) \lambda dx \]
-            \[ C = B \]
-            \[ C = \frac{M L^2}{12} \]
-        </li>
-        <li><strong>Calcul de D:</strong>
-            \[ D = \int_{-L/2}^{L/2} xy \, dm \]
-            \[ D = \int_{-L/2}^{L/2} x(0) \lambda dx \]
-            \[ D = 0 \]
-        </li>
-        <li><strong>Calcul de E:</strong>
-            \[ E = \int_{-L/2}^{L/2} xz \, dm \]
-            \[ E = \int_{-L/2}^{L/2} x(0) \lambda dx \]
-            \[ E = 0 \]
-        </li>
-        <li><strong>Calcul de F:</strong>
-            \[ F = \int_{-L/2}^{L/2} yz \, dm \]
-            \[ F = \int_{-L/2}^{L/2} (0)(0) \lambda dx \]
-            \[ F = 0 \]
-        </li>
-    </ul>
-
-    <hr>
-
-    <h2>Résultat :</h2>
-    <p>Le tenseur d'inertie au point O est:</p>
-    \[ [I_O]_{1.1} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} \end{pmatrix} \]
-
-    <h2>Commentaire :</h2>
-    <p>Les axes OY et OZ sont équivalents par symétrie de révolution autour de OX pour une tige idéalement fine. Ici, la géométrie strictement 1D sur OX impose \( A = 0 \) (pas d'extension en y ou z). Seule la rotation autour d'axes perpendiculaires (OY, OZ) rencontre une inertie (\( B = C \neq 0 \)). Les produits d'inertie sont nuls car OX, OY, OZ sont axes principaux d'inertie.</p>
-
-    <hr style="page-break-after: always;">
-
-    <h2 class="figure-title">Figure 1.2 : Tige parallèle à OX, décalée en Y</h2>
-
-    <figure>
-        <img src="figure2.png" alt="Tige parallèle à OX, décalée en Y">
-        <figcaption>FIGURE 2 - Tige parallèle à OX, décalée en Y</figcaption>
-    </figure>
-
-    <p><strong>Méthodes requises :</strong> Calcul direct et Théorème de Huygens.</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Calcul direct:</strong> Consiste à appliquer les définitions intégrales des moments et produits d'inertie à la géométrie spécifiée (ici, une tige en \( y = a, z = 0 \)).</li>
-        <li><strong>Théorème de Huygens (ou Théorème des axes parallèles) :</strong> Permet de calculer le tenseur d'inertie \( [I_O] \) en un point O quelconque si l'on connaît le tenseur d'inertie \( [I_G] \) au centre de masse G. La formule est :
-            \[ [I_O] = [I_G] + [I_{O/G}] \]
-            où \( [I_{O/G}] \) est le tenseur d'inertie de la masse totale M du solide, supposée concentrée au point G, par rapport au point O. Si \( \vec{OG} = \begin{pmatrix} x_G \\ y_G \\ z_G \end{pmatrix} \), alors :
-            \[ [I_{O/G}] = M \begin{pmatrix} y_G^2 + z_G^2 & -x_G y_G & -x_G z_G \\ -x_G y_G & x_G^2 + z_G^2 & -y_G z_G \\ -x_G z_G & -y_G z_G & x_G^2 + y_G^2 \end{pmatrix} \]
-            Ce théorème est très utile lorsque \( [I_G] \) est simple à calculer (souvent dû à la symétrie par rapport à G).
-        </li>
-        <li><strong>Plan de symétrie:</strong> Le plan \( z = 0 \) contient la tige et est donc un plan de symétrie matérielle. Les produits d'inertie \( E = I_{xz} \) et \( F = I_{yz} \) sont nuls. Le plan \( x = 0 \) est aussi un plan de symétrie géométrique et matérielle (car \( \lambda \) est constante), donc le produit d'inertie \( D = I_{xy} \) est nul.</li>
-    </ul>
-
-    <h2>Géométrie et Paramétrisation :</h2>
-    <ul>
-        <li>Segment parallèle à OX, positionné en \( y = a, z = 0 \). Il s'étend de \( x = -L/2 \) à \( x = +L/2 \).</li>
-        <li>Point P:
-             \[ P = \begin{pmatrix} x \\ a \\ 0 \end{pmatrix}, \quad \text{avec } x \in \left[ -\frac{L}{2}, \frac{L}{2} \right] \]
-        </li>
-         <li>Élément de longueur et de masse : \( dl = dx \), \( dm = \lambda dx \).</li>
-        <li>Masse totale: \( M = \lambda L \).</li>
-        <li>Centre de Masse (G) : Par symétrie (milieu du segment en x, position \( y=a, z=0 \)).
-             \[ G = \begin{pmatrix} 0 \\ a \\ 0 \end{pmatrix} \]
-        </li>
-    </ul>
-
-    <h2>Méthode 1: Calcul direct</h2>
-    <ul>
-        <li><strong>Calcul de A:</strong>
-            \[ A = \int_{-L/2}^{L/2} (y^2 + z^2) dm \]
-            \[ A = \int_{-L/2}^{L/2} (a^2 + 0^2) \lambda dx \]
-            \[ A = \lambda a^2 \int_{-L/2}^{L/2} dx \]
-            \[ A = \lambda a^2 [x]_{-L/2}^{L/2} \]
-            \[ A = \lambda a^2 \left( \frac{L}{2} - \left(-\frac{L}{2}\right) \right) \]
-            \[ A = \lambda a^2 L \]
-            \[ A = Ma^2 \]
-        </li>
-        <li><strong>Calcul de B:</strong>
-            \[ B = \int_{-L/2}^{L/2} (x^2 + z^2) dm \]
-            \[ B = \int_{-L/2}^{L/2} (x^2 + 0^2) \lambda dx \]
-            \[ B = \frac{ML^2}{12} \quad \text{(Comme pour la tige centrée en O, Fig 1.1)} \]
-        </li>
-        <li><strong>Calcul de C:</strong>
-            \[ C = \int_{-L/2}^{L/2} (x^2 + y^2) dm \]
-            \[ C = \int_{-L/2}^{L/2} (x^2 + a^2) \lambda dx \]
-            \[ C = \lambda \int_{-L/2}^{L/2} x^2 dx + \lambda \int_{-L/2}^{L/2} a^2 dx \]
-            \[ C = B + A \quad \text{(Vérification : on sait que C = A + B pour un objet plan z = 0)} \]
-            \[ C = \frac{ML^2}{12} + Ma^2 \]
-        </li>
-        <li><strong>Calcul de D:</strong>
-            \[ D = \int_{-L/2}^{L/2} xy \, dm \]
-            \[ D = \int_{-L/2}^{L/2} x(a) \lambda dx \]
-            \[ D = \lambda a \int_{-L/2}^{L/2} x dx \]
-            \[ D = \lambda a \left[ \frac{x^2}{2} \right]_{-L/2}^{L/2} \]
-            \[ D = \lambda a \left( \frac{(L/2)^2}{2} - \frac{(-L/2)^2}{2} \right) \]
-            \[ D = 0 \quad \text{(Confirmé par la symétrie par rapport au plan x = 0)} \]
-        </li>
-         <li><strong>Calcul de E et F:</strong>
-            \[ E = \int_{-L/2}^{L/2} xz \, dm = \int_{-L/2}^{L/2} x(0) \lambda dx = 0 \]
-            \[ F = \int_{-L/2}^{L/2} yz \, dm = \int_{-L/2}^{L/2} a(0) \lambda dx = 0 \]
-            (Confirmé par la symétrie par rapport au plan z=0)
-         </li>
-    </ul>
-
-    <h2>Résultat (Calcul direct) :</h2>
-    \[ [I_O]_{\text{direct}} = \begin{pmatrix} Ma^2 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & Ma^2 + \frac{ML^2}{12} \end{pmatrix} \]
-
-    <h2>Méthode 2: Théorème de Huygens</h2>
-    <ul>
-        <li>Tenseur au centre de masse \( G = \begin{pmatrix} 0 \\ a \\ 0 \end{pmatrix} \): Dans un repère \( (G, \vec{i}, \vec{j}, \vec{k}) \), la tige est sur l'axe GX' (parallèle à OX) et centrée en G. Sa matrice d'inertie \( [I_G] \) est donc identique à celle de la Fig 1.1 calculée en O :
-            \[ [I_G] = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} \end{pmatrix} \]
-        </li>
-        <li><strong>Vecteur déplacement :</strong>
-            \[ \vec{OG} = \begin{pmatrix} 0 \\ a \\ 0 \end{pmatrix} \]
-            Donc les coordonnées de G sont \( x_G = 0 \), \( y_G = a \), \( z_G = 0 \).
-        </li>
-        <li><strong>Terme de transport \( [I_{O/G}] \):</strong> Appliquons la formule du terme de transport :
-            \[ [I_{O/G}] = M \begin{pmatrix} y_G^2 + z_G^2 & -x_G y_G & -x_G z_G \\ -x_G y_G & x_G^2 + z_G^2 & -y_G z_G \\ -x_G z_G & -y_G z_G & x_G^2 + y_G^2 \end{pmatrix} \]
-            \[ [I_{O/G}] = M \begin{pmatrix} a^2 + 0^2 & -(0)(a) & -(0)(0) \\ -(0)(a) & 0^2 + 0^2 & -(a)(0) \\ -(0)(0) & -(a)(0) & 0^2 + a^2 \end{pmatrix} \]
-            \[ [I_{O/G}] = M \begin{pmatrix} a^2 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & a^2 \end{pmatrix} \]
-            \[ [I_{O/G}] = \begin{pmatrix} Ma^2 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & Ma^2 \end{pmatrix} \]
-        </li>
-    </ul>
-
-    <h2>Application de Huygens :</h2>
-    \[ [I_O] = [I_G] + [I_{O/G}] \]
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} \end{pmatrix} + \begin{pmatrix} Ma^2 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & Ma^2 \end{pmatrix} \]
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} 0 + Ma^2 & 0 + 0 & 0 + 0 \\ 0 + 0 & \frac{ML^2}{12} + 0 & 0 + 0 \\ 0 + 0 & 0 + 0 & \frac{ML^2}{12} + Ma^2 \end{pmatrix} \]
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} Ma^2 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} + Ma^2 \end{pmatrix} \]
-
-    <h2>Vérification :</h2>
-    <p>Les résultats des deux méthodes (Calcul direct et Théorème de Huygens) coïncident. ✓</p>
-
-    <hr style="page-break-after: always;">
-
-    <h2 class="figure-title">Figure 1.3 : Tige parallèle à OX, décalée en X et Y</h2>
-
-    <figure>
-        <img src="figure3.png" alt="Tige parallèle à OX, décalée en X et Y">
-        <figcaption>FIGURE 3 - Tige parallèle à OX, décalée en X et Y</figcaption>
-    </figure>
-
-    <p><strong>Méthodes requises :</strong> Calcul direct et Théorème de Huygens.</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Décalage:</strong> Le déplacement de la tige par rapport à l'origine affecte les coordonnées \( (x, y, z) \) utilisées dans le calcul direct (limites d'intégration et valeurs des coordonnées) et le vecteur position du centre de masse \( \vec{OG} \) utilisé dans le théorème de Huygens.</li>
-        <li><strong>Plan de symétrie :</strong> Le plan \( z = 0 \) reste un plan de symétrie matérielle (la tige est contenue dedans), donc \( E = I_{xz} = 0 \) et \( F = I_{yz} = 0 \). Cependant, le plan \( x = 0 \) n'est plus un plan de symétrie pour la tige décalée, donc \( D = I_{xy} \) peut être non nul.</li>
-        <li><strong>Théorème de Huygens :</strong> Rappel : \( [I_O] = [I_G] + [I_{O/G}] \).</li>
-    </ul>
-
-    <h2>Géométrie et Paramétrisation :</h2>
-    <ul>
-        <li>Segment parallèle à OX, positionné en \( y = 2a, z = 0 \).</li>
-        <li>Il s'étend de \( x = a \) à \( x = a + L \).</li>
-        <li>Point P:
-             \[ P = \begin{pmatrix} x \\ 2a \\ 0 \end{pmatrix}, \quad \text{avec } x \in [a, a + L] \]
-        </li>
-        <li>Élément de longueur et de masse : \( dl = dx \), \( dm = \lambda dx \).</li>
-        <li>Masse totale: \( M = \lambda L \).</li>
-        <li>Centre de Masse (G) : Milieu du segment en x (soit \( a + \frac{L}{2} \)), et \( y = 2a, z = 0 \).
-             \[ G = \begin{pmatrix} a + \frac{L}{2} \\ 2a \\ 0 \end{pmatrix} \]
-        </li>
-    </ul>
-
-    <h2>Méthode 1: Calcul direct</h2>
-    <ul>
-        <li><strong>Calcul de A:</strong>
-             \[ A = \int_{a}^{a+L} (y^2 + z^2) dm \]
-             \[ A = \int_{a}^{a+L} ((2a)^2 + 0^2) \lambda dx \]
-             \[ A = \int_{a}^{a+L} 4a^2 \lambda dx \]
-             \[ A = 4a^2 \lambda \int_{a}^{a+L} dx \]
-             \[ A = 4a^2 \lambda [x]_{a}^{a+L} \]
-             \[ A = 4a^2 \lambda ((a + L) - a) \]
-             \[ A = 4a^2 \lambda L \]
-             \[ A = 4Ma^2 \]
-        </li>
-        <li><strong>Calcul de B:</strong>
-             \[ B = \int_{a}^{a+L} (x^2 + z^2) dm \]
-             \[ B = \int_{a}^{a+L} (x^2 + 0^2) \lambda dx \]
-             \[ B = \lambda \int_{a}^{a+L} x^2 dx \]
-             \[ B = \lambda \left[ \frac{x^3}{3} \right]_{a}^{a+L} \]
-             \[ B = \frac{\lambda}{3} [(a + L)^3 - a^3] \]
-             \[ B = \frac{\lambda}{3} [(a^3 + 3a^2L + 3aL^2 + L^3) - a^3] \]
-             \[ B = \frac{\lambda}{3} (3a^2L + 3aL^2 + L^3) \]
-             \[ B = \lambda L \left( a^2 + aL + \frac{L^2}{3} \right) \]
-             \[ B = M \left( a^2 + aL + \frac{L^2}{3} \right) \]
-        </li>
-        <li><strong>Calcul de C:</strong>
-             \[ C = \int_{a}^{a+L} (x^2 + y^2) dm \]
-             \[ C = \int_{a}^{a+L} (x^2 + (2a)^2) \lambda dx \]
-             \[ C = \lambda \int_{a}^{a+L} x^2 dx + \lambda \int_{a}^{a+L} 4a^2 dx \]
-             \[ C = B + A \quad (\text{Vérification : car z = 0}) \]
-             \[ C = M \left( a^2 + aL + \frac{L^2}{3} \right) + 4Ma^2 \]
-             \[ C = M \left( 5a^2 + aL + \frac{L^2}{3} \right) \]
-        </li>
-        <li><strong>Calcul de D:</strong>
-             \[ D = \int_{a}^{a+L} xy \, dm \]
-             \[ D = \int_{a}^{a+L} x(2a) \lambda dx \]
-             \[ D = 2a\lambda \int_{a}^{a+L} x dx \]
-             \[ D = 2a\lambda \left[ \frac{x^2}{2} \right]_{a}^{a+L} \]
-             \[ D = a\lambda [(a + L)^2 - a^2] \]
-             \[ D = a\lambda (a^2 + 2aL + L^2 - a^2) \]
-             \[ D = a\lambda (2aL + L^2) \]
-             \[ D = (\lambda L)(2a^2 + aL) \]
-             \[ D = M(2a^2 + aL) \quad (\neq 0, \text{comme attendu}) \]
-        </li>
-         <li><strong>Calcul de E et F:</strong>
-             \[ E = \int_{a}^{a+L} xz \, dm = 0 \quad (\text{car } z = 0) \]
-             \[ F = \int_{a}^{a+L} yz \, dm = 0 \quad (\text{car } z = 0) \]
-         </li>
-    </ul>
-
-    <h2>Résultat (Calcul direct) :</h2>
-    \[ [I_O]_{\text{direct}} = \begin{pmatrix} A & -D & -E \\ -D & B & -F \\ -E & -F & C \end{pmatrix} \]
-    \[ [I_O]_{\text{direct}} = \begin{pmatrix} 4Ma^2 & -M(2a^2 + aL) & 0 \\ -M(2a^2 + aL) & M(a^2 + aL + \frac{L^2}{3}) & 0 \\ 0 & 0 & M(5a^2 + aL + \frac{L^2}{3}) \end{pmatrix} \]
-
-    <h2>Méthode 2: Théorème de Huygens</h2>
-    <ul>
-        <li>Tenseur au centre de masse \( G = \begin{pmatrix} a + L/2 \\ 2a \\ 0 \end{pmatrix} \): Comme dans l'exemple 1.2 (ou 1.1), le tenseur \( [I_G] \) dans une base centrée en G et parallèle à R est celui d'une tige centrée sur l'axe GX' :
-            \[ [I_G] = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} \end{pmatrix} \]
-        </li>
-        <li><strong>Vecteur déplacement :</strong>
-            \[ \vec{OG} = \begin{pmatrix} a + \frac{L}{2} \\ 2a \\ 0 \end{pmatrix} \]
-            Coordonnées de G : \( x_G = a + \frac{L}{2} \), \( y_G = 2a \), \( z_G = 0 \).
-        </li>
-        <li><strong>Terme de transport \( [I_{O/G}] \):</strong> Calculons les composantes nécessaires pour la matrice de transport :
-            <p>\( y_G^2 + z_G^2 = (2a)^2 + 0^2 = 4a^2 \)</p>
-            <p>\( x_G^2 + z_G^2 = (a + \frac{L}{2})^2 + 0^2 = a^2 + aL + \frac{L^2}{4} \)</p>
-            <p>\( x_G^2 + y_G^2 = (a + \frac{L}{2})^2 + (2a)^2 = a^2 + aL + \frac{L^2}{4} + 4a^2 = 5a^2 + aL + \frac{L^2}{4} \)</p>
-            <p>\( -x_G y_G = - (a + \frac{L}{2}) (2a) = -2a^2 - aL \)</p>
-            <p>\( -x_G z_G = 0 \)</p>
-            <p>\( -y_G z_G = 0 \)</p>
-            La matrice de transport est donc :
-            \[ [I_{O/G}] = M \begin{pmatrix} 4a^2 & -(2a^2 + aL) & 0 \\ -(2a^2 + aL) & a^2 + aL + \frac{L^2}{4} & 0 \\ 0 & 0 & 5a^2 + aL + \frac{L^2}{4} \end{pmatrix} \]
-            \[ [I_{O/G}] = \begin{pmatrix} 4Ma^2 & -M(2a^2 + aL) & 0 \\ -M(2a^2 + aL) & M(a^2 + aL + \frac{L^2}{4}) & 0 \\ 0 & 0 & M(5a^2 + aL + \frac{L^2}{4}) \end{pmatrix} \]
-        </li>
-    </ul>
-
-    <h2>Application de Huygens :</h2>
-    \[ [I_O] = [I_G] + [I_{O/G}] \]
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{ML^2}{12} & 0 \\ 0 & 0 & \frac{ML^2}{12} \end{pmatrix} + \begin{pmatrix} 4Ma^2 & -M(2a^2 + aL) & 0 \\ -M(2a^2 + aL) & M(a^2 + aL + \frac{L^2}{4}) & 0 \\ 0 & 0 & M(5a^2 + aL + \frac{L^2}{4}) \end{pmatrix} \]
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} 4Ma^2 & -M(2a^2 + aL) & 0 \\ -M(2a^2 + aL) & M(a^2 + aL + \frac{L^2}{4}) + \frac{ML^2}{12} & 0 \\ 0 & 0 & M(5a^2 + aL + \frac{L^2}{4}) + \frac{ML^2}{12} \end{pmatrix} \]
-    <p>Calculons les termes diagonaux B et C:</p>
-    <p>\( B = M(a^2 + aL + \frac{L^2}{4} + \frac{L^2}{12}) = M(a^2 + aL + \frac{3L^2+L^2}{12}) = M(a^2 + aL + \frac{4L^2}{12}) = M(a^2 + aL + \frac{L^2}{3}) \)</p>
-    <p>\( C = M(5a^2 + aL + \frac{L^2}{4} + \frac{L^2}{12}) = M(5a^2 + aL + \frac{3L^2+L^2}{12}) = M(5a^2 + aL + \frac{4L^2}{12}) = M(5a^2 + aL + \frac{L^2}{3}) \)</p>
-    \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} 4Ma^2 & -M(2a^2 + aL) & 0 \\ -M(2a^2 + aL) & M(a^2 + aL + \frac{L^2}{3}) & 0 \\ 0 & 0 & M(5a^2 + aL + \frac{L^2}{3}) \end{pmatrix} \]
-
-    <h2>Vérification :</h2>
-    <p>Les résultats des deux méthodes coïncident. ✓</p>
-
-    <hr style="page-break-after: always;">
-
-     <h2 class="figure-title">Figure 1.4 : Cadre rectangulaire centré en O</h2>
-
-    <figure>
-        <img src="figure4.png" alt="Cadre rectangulaire centré en O">
-        <figcaption>FIGURE 4 - Cadre rectangulaire centré en O</figcaption>
-    </figure>
-
-    <p><strong>Méthode requise :</strong> Calcul direct (par additivité).</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Additivité:</strong> Pour un solide composé de plusieurs parties \( (S_i) \) sans recouvrement de masse, le tenseur d'inertie total \( [I_O] \) est la somme des tenseurs d'inertie de chaque partie \( [I_O]_i \), calculés au même point O et dans la même base.
-            \[ [I_O] = \sum [I_O]_i \]
-        </li>
-        <li><strong>Théorème de Huygens :</strong> Utilisé ici pour chaque segment (partie \( S_i \)) afin de calculer son tenseur \( [I_O]_i \) à partir de son tenseur au centre de masse \( [I_{G_i}] \) : \( [I_O]_i = [I_{G_i}] + [I_{O/G_i}] \).</li>
-        <li><strong>Symétrie :</strong> Le cadre est centré en O. Les plans \( x = 0 \) (plan yOz) et \( y = 0 \) (plan xOz) sont des plans de symétrie matérielle. Puisque les axes OX et OY sont contenus dans ces plans de symétrie respectifs, les produits d'inertie correspondants sont nuls (\( D = I_{xy} = 0, E = I_{xz} = 0, F = I_{yz} = 0 \)). La matrice d'inertie totale \( [I_O] \) est donc diagonale.</li>
-    </ul>
-
-    <h2>Géométrie et Décomposition :</h2>
-    <p>Cadre formé de 4 segments de tiges homogènes (densité \( \lambda \)), dimensions \( a \times b \).</p>
-    <ul>
-        <li><strong>Seg 1 (Haut):</strong> Tige horizontale en \( y = b/2 \), \( x \in [-a/2, a/2] \). Longueur \( a \). Masse \( M_1 = \lambda a \). Centre de masse \( G_1 \):
-             \[ G_1 = \begin{pmatrix} 0 \\ b/2 \\ 0 \end{pmatrix} \]
-        </li>
-        <li><strong>Seg 2 (Bas):</strong> Tige horizontale en \( y = -b/2 \), \( x \in [-a/2, a/2] \). Longueur \( a \). Masse \( M_2 = \lambda a \). Centre de masse \( G_2 \):
-             \[ G_2 = \begin{pmatrix} 0 \\ -b/2 \\ 0 \end{pmatrix} \quad (M_2 = M_1) \]
-        </li>
-        <li><strong>Seg 3 (Droite):</strong> Tige verticale en \( x = a/2 \), \( y \in [-b/2, b/2] \). Longueur \( b \). Masse \( M_3 = \lambda b \). Centre de masse \( G_3 \):
-             \[ G_3 = \begin{pmatrix} a/2 \\ 0 \\ 0 \end{pmatrix} \]
-        </li>
-        <li><strong>Seg 4 (Gauche):</strong> Tige verticale en \( x = -a/2 \), \( y \in [-b/2, b/2] \). Longueur \( b \). Masse \( M_4 = \lambda b \). Centre de masse \( G_4 \):
-             \[ G_4 = \begin{pmatrix} -a/2 \\ 0 \\ 0 \end{pmatrix} \quad (M_4 = M_3) \]
-        </li>
-    </ul>
-    <p>Masse totale :</p>
-    \[ M = M_1 + M_2 + M_3 + M_4 \]
-    \[ M = 2M_1 + 2M_3 \]
-    \[ M = 2\lambda a + 2\lambda b \]
-    \[ M = 2\lambda (a + b) \]
-
-    <h2>Calcul pour chaque segment (via Huygens) :</h2>
-    <ul>
-        <li><strong>Segment 1 (Haut) :</strong> \( G_1 = \begin{pmatrix} 0 \\ b/2 \\ 0 \end{pmatrix} \), \( M_1 = \lambda a \).
-            <p>Tenseur en G1 (tige de longueur a parallèle à OX) :</p>
-            \[ [I_{G1}] = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{M_1 a^2}{12} & 0 \\ 0 & 0 & \frac{M_1 a^2}{12} \end{pmatrix} \]
-            <p>Transport O/G1 : \( x_G = 0, y_G = b/2, z_G = 0 \).</p>
-            \[ [I_{O/G1}] = M_1 \begin{pmatrix} (b/2)^2 + 0 & 0 & 0 \\ 0 & 0 + 0 & 0 \\ 0 & 0 & 0 + (b/2)^2 \end{pmatrix} = \begin{pmatrix} \frac{M_1 b^2}{4} & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & \frac{M_1 b^2}{4} \end{pmatrix} \]
-            <p>Tenseur en O pour Seg 1 :</p>
-            \[ [I_O]_1 = [I_{G1}] + [I_{O/G1}] = \begin{pmatrix} \frac{M_1 b^2}{4} & 0 & 0 \\ 0 & \frac{M_1 a^2}{12} & 0 \\ 0 & 0 & \frac{M_1 a^2}{12} + \frac{M_1 b^2}{4} \end{pmatrix} \]
-        </li>
-        <li><strong>Segment 2 (Bas) :</strong> \( G_2 = \begin{pmatrix} 0 \\ -b/2 \\ 0 \end{pmatrix} \), \( M_2 = M_1 \). \( [I_{G2}] = [I_{G1}] \). Le terme de transport \( [I_{O/G2}] \) est identique à \( [I_{O/G1}] \) car \( y_G^2 = (-b/2)^2 = (b/2)^2 \). Donc :
-            \[ [I_O]_2 = [I_O]_1 \]
-        </li>
-        <li><strong>Segment 3 (Droite) :</strong> \( G_3 = \begin{pmatrix} a/2 \\ 0 \\ 0 \end{pmatrix} \), \( M_3 = \lambda b \).
-             <p>Tenseur en G3 (tige de longueur b parallèle à OY) :</p>
-             \[ [I_{G3}] = \begin{pmatrix} \frac{M_3 b^2}{12} & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & \frac{M_3 b^2}{12} \end{pmatrix} \]
-             <p>Transport O/G3 : \( x_G = a/2, y_G = 0, z_G = 0 \).</p>
-             \[ [I_{O/G3}] = M_3 \begin{pmatrix} 0 + 0 & 0 & 0 \\ 0 & (a/2)^2 + 0 & 0 \\ 0 & 0 & (a/2)^2 + 0 \end{pmatrix} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{M_3 a^2}{4} & 0 \\ 0 & 0 & \frac{M_3 a^2}{4} \end{pmatrix} \]
-             <p>Tenseur en O pour Seg 3 :</p>
-             \[ [I_O]_3 = [I_{G3}] + [I_{O/G3}] = \begin{pmatrix} \frac{M_3 b^2}{12} & 0 & 0 \\ 0 & \frac{M_3 a^2}{4} & 0 \\ 0 & 0 & \frac{M_3 b^2}{12} + \frac{M_3 a^2}{4} \end{pmatrix} \]
-        </li>
-         <li><strong>Segment 4 (Gauche) :</strong> \( G_4 = \begin{pmatrix} -a/2 \\ 0 \\ 0 \end{pmatrix} \), \( M_4 = M_3 \). \( [I_{G4}] = [I_{G3}] \). Le terme de transport \( [I_{O/G4}] \) est identique à \( [I_{O/G3}] \) car \( x_G^2 = (-a/2)^2 = (a/2)^2 \). Donc :
-            \[ [I_O]_4 = [I_O]_3 \]
-        </li>
-    </ul>
-
-    <h2>Sommation :</h2>
-    <p>En utilisant l'additivité :</p>
-    \[ [I_O] = [I_O]_1 + [I_O]_2 + [I_O]_3 + [I_O]_4 \]
-    \[ [I_O] = 2[I_O]_1 + 2[I_O]_3 \]
-    <p>La matrice résultante \( [I_O] \) est diagonale, comme prévu par la symétrie. Calculons ses termes diagonaux A, B, C :</p>
-    <ul>
-        <li><strong>Calcul de A (moment / Ox):</strong>
-            \[ A = 2A_1 + 2A_3 \]
-            \[ A = 2 \left( \frac{M_1 b^2}{4} \right) + 2 \left( \frac{M_3 b^2}{12} \right) \]
-            \[ A = 2 \left( \frac{(\lambda a) b^2}{4} \right) + 2 \left( \frac{(\lambda b) b^2}{12} \right) \]
-            \[ A = \frac{\lambda a b^2}{2} + \frac{\lambda b^3}{6} \]
-            \[ A = \frac{\lambda b^2}{6} (3a + b) \]
-       </li>
-       <li><strong>Calcul de B (moment / Oy):</strong>
-            \[ B = 2B_1 + 2B_3 \]
-            \[ B = 2 \left( \frac{M_1 a^2}{12} \right) + 2 \left( \frac{M_3 a^2}{4} \right) \]
-            \[ B = 2 \left( \frac{(\lambda a) a^2}{12} \right) + 2 \left( \frac{(\lambda b) a^2}{4} \right) \]
-            \[ B = \frac{\lambda a^3}{6} + \frac{\lambda b a^2}{2} \]
-            \[ B = \frac{\lambda a^2}{6} (a + 3b) \]
-        </li>
-        <li><strong>Calcul de C (moment / Oz):</strong>
-            \[ C = 2C_1 + 2C_3 \]
-            \[ C = 2 \left( \frac{M_1 a^2}{12} + \frac{M_1 b^2}{4} \right) + 2 \left( \frac{M_3 b^2}{12} + \frac{M_3 a^2}{4} \right) \]
-            \[ C = 2 \left( \frac{(\lambda a) a^2}{12} + \frac{(\lambda a) b^2}{4} \right) + 2 \left( \frac{(\lambda b) b^2}{12} + \frac{(\lambda b) a^2}{4} \right) \]
-            \[ C = \left( \frac{\lambda a^3}{6} + \frac{\lambda a b^2}{2} \right) + \left( \frac{\lambda b^3}{6} + \frac{\lambda b a^2}{2} \right) \]
-            \[ C = B + A \]
-         </li>
-    </ul>
-    <p><strong>Vérification C = A + B :</strong></p>
-    \[ A + B = \frac{\lambda b^2}{6} (3a + b) + \frac{\lambda a^2}{6} (a + 3b) \]
-    \[ A + B = \frac{\lambda}{6} (3ab^2 + b^3 + a^3 + 3a^2b) \]
-    \[ A + B = \frac{\lambda}{6} (a^3 + 3a^2b + 3ab^2 + b^3) \]
-    <p>Le calcul de C donne :</p>
-     \[ C = \frac{\lambda a^3}{6} + \frac{\lambda a b^2}{2} + \frac{\lambda b^3}{6} + \frac{\lambda b a^2}{2} \]
-     \[ C = \frac{\lambda}{6} (a^3 + 3ab^2 + b^3 + 3a^2b) \]
-     \[ C = \frac{\lambda}{6} (a^3 + 3a^2b + 3ab^2 + b^3) \]
-     <p>Donc C = A + B. (OK. Théorème de l'axe perpendiculaire vérifié pour le cadre plan)</p>
-
-    <h2>Résultat :</h2>
-     \[ [I_O]_{1.4} = \begin{pmatrix} A & 0 & 0 \\ 0 & B & 0 \\ 0 & 0 & C \end{pmatrix} \]
-     \[ [I_O]_{1.4} = \begin{pmatrix} \frac{\lambda b^2}{6} (3a + b) & 0 & 0 \\ 0 & \frac{\lambda a^2}{6} (a + 3b) & 0 \\ 0 & 0 & \frac{\lambda}{6} (a^3 + 3a^2b + 3ab^2 + b^3) \end{pmatrix} \]
-     <p>ou, en termes de A et B calculés :</p>
-     \[ [I_O]_{1.4} = \begin{pmatrix} A & 0 & 0 \\ 0 & B & 0 \\ 0 & 0 & A+B \end{pmatrix} \]
-
-    <hr style="page-break-after: always;">
-
-     <h2 class="figure-title">Figure 1.5 : Corps composé de trois tiges dans le plan XY</h2>
-
-    <figure>
-        <img src="figure5.png" alt="Corps composé de trois tiges dans le plan XY">
-        <figcaption>FIGURE 5 - Corps composé de trois tiges dans le plan XY</figcaption>
-    </figure>
-
-    <p><strong>Méthode requise :</strong> Additivité et Théorème de Huygens, vérification par Calcul direct.</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Additivité :</strong> Le tenseur total est la somme des tenseurs des parties. \( [I_O]_{\text{total}} = \sum [I_O]_i \).</li>
-        <li><strong>Théorème de Huygens :</strong> Utilisé pour chaque segment pour trouver \( [I_O]_i \) à partir de \( [I_{G_i}] \). \( [I_O]_i = [I_{G_i}] + [I_{O/G_i}] \).</li>
-        <li><strong>Plan de symétrie :</strong> Le corps est dans le plan \( z = 0 \), qui est un plan de symétrie matérielle. Donc, \( E = I_{xz} = 0 \) et \( F = I_{yz} = 0 \). Le produit d'inertie \( D = I_{xy} \) n'est généralement pas nul car il n'y a pas de symétrie par rapport aux plans \( x = 0 \) ou \( y = 0 \).</li>
-        <li><strong>Corps linéique:</strong> Chaque segment est modélisé comme un corps linéique (\( dm = \lambda dl \)).</li>
-        <li><strong>Tenseur d'une tige inclinée:</strong> Pour une tige de masse M, longueur L, dont l'orientation est donnée par le vecteur unitaire \( \vec{u} \), son tenseur d'inertie par rapport à son centre G est \( [I_G] = \frac{ML^2}{12} (\mathbf{I} - \vec{u} \otimes \vec{u}) \), où \( \mathbf{I} \) est la matrice identité et \( \vec{u} \otimes \vec{u} \) est le produit tensoriel (dyadique) de \( \vec{u} \) avec lui-même.
-        \( (\vec{u} \otimes \vec{u})_{ij} = u_i u_j \)
-        </li>
-    </ul>
-
-    <h2>Géométrie et Décomposition :</h2>
-    <p>Le corps est formé de 3 segments de tiges homogènes (densité \( \lambda \)) dans le plan \( z = 0 \).</p>
-    <ul>
-        <li><strong>Seg 1 (AB):</strong> de \( A = \begin{pmatrix} 0 \\ a \\ 0 \end{pmatrix} \) à \( B = \begin{pmatrix} a \\ a \\ 0 \end{pmatrix} \).
-            <ul>
-                <li>Orientation : Parallèle à OX.</li>
-                <li>Longueur \( L_1 = a \).</li>
-                <li>Masse \( M_1 = \lambda a \).</li>
-                <li>Centre de masse \( G_1 = \frac{A+B}{2} = \begin{pmatrix} a/2 \\ a \\ 0 \end{pmatrix} \).</li>
-            </ul>
-        </li>
-        <li><strong>Seg 2 (BC):</strong> de \( B = \begin{pmatrix} a \\ a \\ 0 \end{pmatrix} \) à \( C = \begin{pmatrix} a \\ 2a \\ 0 \end{pmatrix} \).
-             <ul>
-                 <li>Orientation : Parallèle à OY.</li>
-                 <li>Longueur \( L_2 = a \).</li>
-                 <li>Masse \( M_2 = \lambda a \).</li>
-                 <li>Centre de masse \( G_2 = \frac{B+C}{2} = \begin{pmatrix} a \\ 3a/2 \\ 0 \end{pmatrix} \).</li>
-            </ul>
-        </li>
-         <li><strong>Seg 3 (CD):</strong> de \( C = \begin{pmatrix} a \\ 2a \\ 0 \end{pmatrix} \) à \( D = \begin{pmatrix} a - a\sqrt{2} \\ 2a + a\sqrt{2} \\ 0 \end{pmatrix} \).
-              <ul>
-                  <li>Vecteur \( \vec{CD} = D - C = \begin{pmatrix} -a\sqrt{2} \\ a\sqrt{2} \\ 0 \end{pmatrix} \).</li>
-                  <li>Longueur \( L_3 = ||\vec{CD}|| = \sqrt{(-a\sqrt{2})^2 + (a\sqrt{2})^2 + 0^2} = \sqrt{2a^2 + 2a^2} = \sqrt{4a^2} = 2a \).</li>
-                  <li>Masse \( M_3 = \lambda L_3 = 2\lambda a \).</li>
-                  <li>Centre de masse \( G_3 = \frac{C+D}{2} = \begin{pmatrix} (a + a - a\sqrt{2})/2 \\ (2a + 2a + a\sqrt{2})/2 \\ 0 \end{pmatrix} = \begin{pmatrix} a(1 - \frac{\sqrt{2}}{2}) \\ a(2 + \frac{\sqrt{2}}{2}) \\ 0 \end{pmatrix} \).</li>
-                  <li>Vecteur unitaire \( \vec{u}_3 = \frac{\vec{CD}}{L_3} = \frac{1}{2a} \begin{pmatrix} -a\sqrt{2} \\ a\sqrt{2} \\ 0 \end{pmatrix} = \begin{pmatrix} -1/\sqrt{2} \\ 1/\sqrt{2} \\ 0 \end{pmatrix} \). (Angle de 135° avec OX).</li>
-             </ul>
-         </li>
-    </ul>
-     <p>Masse totale: \( M = M_1 + M_2 + M_3 = \lambda a + \lambda a + 2\lambda a = 4\lambda a \).</p>
-
-    <h2>Méthode 1: Additivité et Théorème de Huygens</h2>
-    <p>On calcule \( [I_O]_i = [I_{G_i}] + [I_{O/G_i}] \) pour chaque segment i = 1, 2, 3.</p>
-    <ul>
-        <li><strong>Segment 1 (AB) :</strong> Parallèle à OX. \( M_1 = \lambda a, L_1 = a, G_1 = \begin{pmatrix} a/2 \\ a \\ 0 \end{pmatrix} \).
-            <p>Tenseur \( [I_{G1}] \) (cf. Fig 1.1) :</p>
-            \[ [I_{G1}] = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{M_1 a^2}{12} & 0 \\ 0 & 0 & \frac{M_1 a^2}{12} \end{pmatrix} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & \frac{\lambda a^3}{12} & 0 \\ 0 & 0 & \frac{\lambda a^3}{12} \end{pmatrix} \]
-            <p>Transport \( [I_{O/G1}] \): \( x_G = a/2, y_G = a, z_G = 0 \).</p>
-             \[ [I_{O/G1}] = M_1 \begin{pmatrix} a^2 + 0 & -(a/2)a & 0 \\ -(a/2)a & (a/2)^2 + 0 & 0 \\ 0 & 0 & (a/2)^2 + a^2 \end{pmatrix} = (\lambda a) \begin{pmatrix} a^2 & -a^2/2 & 0 \\ -a^2/2 & a^2/4 & 0 \\ 0 & 0 & 5a^2/4 \end{pmatrix} \]
-             \[ [I_{O/G1}] = \begin{pmatrix} \lambda a^3 & -\frac{\lambda a^3}{2} & 0 \\ -\frac{\lambda a^3}{2} & \frac{\lambda a^3}{4} & 0 \\ 0 & 0 & \frac{5\lambda a^3}{4} \end{pmatrix} \]
-             <p>Tenseur \( [I_O]_1 \):</p>
-             \[ [I_O]_1 = [I_{G1}] + [I_{O/G1}] = \begin{pmatrix} \lambda a^3 & -\frac{\lambda a^3}{2} & 0 \\ -\frac{\lambda a^3}{2} & \frac{\lambda a^3}{12} + \frac{\lambda a^3}{4} & 0 \\ 0 & 0 & \frac{\lambda a^3}{12} + \frac{5\lambda a^3}{4} \end{pmatrix} \]
-              \[ [I_O]_1 = \begin{pmatrix} \lambda a^3 & -\frac{\lambda a^3}{2} & 0 \\ -\frac{\lambda a^3}{2} & \frac{4\lambda a^3}{12} & 0 \\ 0 & 0 & \frac{16\lambda a^3}{12} \end{pmatrix} = \begin{pmatrix} \lambda a^3 & -\frac{\lambda a^3}{2} & 0 \\ -\frac{\lambda a^3}{2} & \frac{\lambda a^3}{3} & 0 \\ 0 & 0 & \frac{4\lambda a^3}{3} \end{pmatrix} \]
-         </li>
-        <li><strong>Segment 2 (BC) :</strong> Parallèle à OY. \( M_2 = \lambda a, L_2 = a, G_2 = \begin{pmatrix} a \\ 3a/2 \\ 0 \end{pmatrix} \).
-            <p>Tenseur \( [I_{G2}] \) (tige // OY) :</p>
-             \[ [I_{G2}] = \begin{pmatrix} \frac{M_2 a^2}{12} & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & \frac{M_2 a^2}{12} \end{pmatrix} = \begin{pmatrix} \frac{\lambda a^3}{12} & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & \frac{\lambda a^3}{12} \end{pmatrix} \]
-             <p>Transport \( [I_{O/G2}] \): \( x_G = a, y_G = 3a/2, z_G = 0 \).</p>
-              \[ [I_{O/G2}] = M_2 \begin{pmatrix} (3a/2)^2 + 0 & -a(3a/2) & 0 \\ -a(3a/2) & a^2 + 0 & 0 \\ 0 & 0 & a^2 + (3a/2)^2 \end{pmatrix} = (\lambda a) \begin{pmatrix} 9a^2/4 & -3a^2/2 & 0 \\ -3a^2/2 & a^2 & 0 \\ 0 & 0 & a^2 + 9a^2/4 \end{pmatrix} \]
-              \[ [I_{O/G2}] = \begin{pmatrix} \frac{9\lambda a^3}{4} & -\frac{3\lambda a^3}{2} & 0 \\ -\frac{3\lambda a^3}{2} & \lambda a^3 & 0 \\ 0 & 0 & \frac{13\lambda a^3}{4} \end{pmatrix} \]
-              <p>Tenseur \( [I_O]_2 \):</p>
-              \[ [I_O]_2 = [I_{G2}] + [I_{O/G2}] = \begin{pmatrix} \frac{\lambda a^3}{12} + \frac{9\lambda a^3}{4} & -\frac{3\lambda a^3}{2} & 0 \\ -\frac{3\lambda a^3}{2} & 0 + \lambda a^3 & 0 \\ 0 & 0 & \frac{\lambda a^3}{12} + \frac{13\lambda a^3}{4} \end{pmatrix} \]
-               \[ [I_O]_2 = \begin{pmatrix} \frac{28\lambda a^3}{12} & -\frac{3\lambda a^3}{2} & 0 \\ -\frac{3\lambda a^3}{2} & \lambda a^3 & 0 \\ 0 & 0 & \frac{40\lambda a^3}{12} \end{pmatrix} = \begin{pmatrix} \frac{7\lambda a^3}{3} & -\frac{3\lambda a^3}{2} & 0 \\ -\frac{3\lambda a^3}{2} & \lambda a^3 & 0 \\ 0 & 0 & \frac{10\lambda a^3}{3} \end{pmatrix} \]
-         </li>
-        <li><strong>Segment 3 (CD) :</strong> Orienté à 135°. \( M_3 = 2\lambda a, L_3 = 2a, G_3 = \begin{pmatrix} a(1-\frac{\sqrt{2}}{2}) \\ a(2+\frac{\sqrt{2}}{2}) \\ 0 \end{pmatrix} \), \( \vec{u}_3 = \begin{pmatrix} -1/\sqrt{2} \\ 1/\sqrt{2} \\ 0 \end{pmatrix} \).
-            <p>Tenseur \( [I_{G3}] \):</p>
-             \[ \frac{M_3 L_3^2}{12} = \frac{(2\lambda a) (2a)^2}{12} = \frac{8\lambda a^3}{12} = \frac{2\lambda a^3}{3} \]
-             \[ \vec{u}_3 \otimes \vec{u}_3 = \begin{pmatrix} (-1/\sqrt{2})^2 & (-1/\sqrt{2})(1/\sqrt{2}) & 0 \\ (-1/\sqrt{2})(1/\sqrt{2}) & (1/\sqrt{2})^2 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 1/2 & -1/2 & 0 \\ -1/2 & 1/2 & 0 \\ 0 & 0 & 0 \end{pmatrix} \]
-             \[ \mathbf{I} - \vec{u}_3 \otimes \vec{u}_3 = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix} - \begin{pmatrix} 1/2 & -1/2 & 0 \\ -1/2 & 1/2 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 1/2 & 1/2 & 0 \\ 1/2 & 1/2 & 0 \\ 0 & 0 & 1 \end{pmatrix} \]
-             \[ [I_{G3}] = \frac{2\lambda a^3}{3} \begin{pmatrix} 1/2 & 1/2 & 0 \\ 1/2 & 1/2 & 0 \\ 0 & 0 & 1 \end{pmatrix} = \begin{pmatrix} \frac{\lambda a^3}{3} & \frac{\lambda a^3}{3} & 0 \\ \frac{\lambda a^3}{3} & \frac{\lambda a^3}{3} & 0 \\ 0 & 0 & \frac{2\lambda a^3}{3} \end{pmatrix} \]
-             <p>Transport \( [I_{O/G3}] \): \( x_G = a(1-\frac{\sqrt{2}}{2}), y_G = a(2+\frac{\sqrt{2}}{2}), z_G = 0 \).</p>
-             <p>\( y_G^2 = a^2(2+\frac{\sqrt{2}}{2})^2 = a^2(4 + 2\sqrt{2} + \frac{1}{2}) = a^2(4.5 + 2\sqrt{2}) \)</p>
-             <p>\( x_G^2 = a^2(1-\frac{\sqrt{2}}{2})^2 = a^2(1 - \sqrt{2} + \frac{1}{2}) = a^2(1.5 - \sqrt{2}) \)</p>
-             <p>\( x_G^2 + y_G^2 = a^2(1.5 - \sqrt{2} + 4.5 + 2\sqrt{2}) = a^2(6 + \sqrt{2}) \)</p>
-             <p>\( -x_G y_G = -a^2(1-\frac{\sqrt{2}}{2})(2+\frac{\sqrt{2}}{2}) = -a^2(2 + \frac{\sqrt{2}}{2} - \sqrt{2} - \frac{1}{2}) = -a^2(1.5 - \frac{\sqrt{2}}{2}) \)</p>
-             \[ [I_{O/G3}] = M_3 \begin{pmatrix} y_G^2 & -x_G y_G & 0 \\ -x_G y_G & x_G^2 & 0 \\ 0 & 0 & x_G^2 + y_G^2 \end{pmatrix} \]
-             \[ [I_{O/G3}] = (2\lambda a) a^2 \begin{pmatrix} 4.5 + 2\sqrt{2} & -(1.5 - \frac{\sqrt{2}}{2}) & 0 \\ -(1.5 - \frac{\sqrt{2}}{2}) & 1.5 - \sqrt{2} & 0 \\ 0 & 0 & 6 + \sqrt{2} \end{pmatrix} \]
-              \[ [I_{O/G3}] = \lambda a^3 \begin{pmatrix} 9 + 4\sqrt{2} & -(3 - \sqrt{2}) & 0 \\ -(3 - \sqrt{2}) & 3 - 2\sqrt{2} & 0 \\ 0 & 0 & 12 + 2\sqrt{2} \end{pmatrix} \]
-              <p>Tenseur \( [I_O]_3 \):</p>
-              \[ [I_O]_3 = [I_{G3}] + [I_{O/G3}] \]
-              \[ [I_O]_3 = \begin{pmatrix} \frac{\lambda a^3}{3} & \frac{\lambda a^3}{3} & 0 \\ \frac{\lambda a^3}{3} & \frac{\lambda a^3}{3} & 0 \\ 0 & 0 & \frac{2\lambda a^3}{3} \end{pmatrix} + \lambda a^3 \begin{pmatrix} 9 + 4\sqrt{2} & -3 + \sqrt{2} & 0 \\ -3 + \sqrt{2} & 3 - 2\sqrt{2} & 0 \\ 0 & 0 & 12 + 2\sqrt{2} \end{pmatrix} \]
-              \[ [I_O]_3 = \lambda a^3 \begin{pmatrix} \frac{1}{3} + 9 + 4\sqrt{2} & \frac{1}{3} - 3 + \sqrt{2} & 0 \\ \frac{1}{3} - 3 + \sqrt{2} & \frac{1}{3} + 3 - 2\sqrt{2} & 0 \\ 0 & 0 & \frac{2}{3} + 12 + 2\sqrt{2} \end{pmatrix} \]
-               \[ [I_O]_3 = \lambda a^3 \begin{pmatrix} \frac{28}{3} + 4\sqrt{2} & -\frac{8}{3} + \sqrt{2} & 0 \\ -\frac{8}{3} + \sqrt{2} & \frac{10}{3} - 2\sqrt{2} & 0 \\ 0 & 0 & \frac{38}{3} + 2\sqrt{2} \end{pmatrix} \]
-         </li>
-    </ul>
-
-    <h2>Tenseur Total :</h2>
-    \[ [I_O] = [I_O]_1 + [I_O]_2 + [I_O]_3 \]
-    \[ [I_O] = \begin{pmatrix} A & -D & -E \\ -D & B & -F \\ -E & -F & C \end{pmatrix} \quad \text{avec } E = F = 0 \]
-    <p>Calcul des composantes A, B, D, C :</p>
-    <ul>
-        <li><strong>A:</strong>
-            \[ A = A_1 + A_2 + A_3 \]
-            \[ A = \lambda a^3 + \frac{7\lambda a^3}{3} + \lambda a^3 \left( \frac{28}{3} + 4\sqrt{2} \right) \]
-            \[ A = \lambda a^3 \left( 1 + \frac{7}{3} + \frac{28}{3} + 4\sqrt{2} \right) = \lambda a^3 \left( \frac{3+7+28}{3} + 4\sqrt{2} \right) \]
-            \[ A = \lambda a^3 \left( \frac{38}{3} + 4\sqrt{2} \right) \]
-        </li>
-         <li><strong>B:</strong>
-            \[ B = B_1 + B_2 + B_3 \]
-            \[ B = \frac{\lambda a^3}{3} + \lambda a^3 + \lambda a^3 \left( \frac{10}{3} - 2\sqrt{2} \right) \]
-            \[ B = \lambda a^3 \left( \frac{1}{3} + 1 + \frac{10}{3} - 2\sqrt{2} \right) = \lambda a^3 \left( \frac{1+3+10}{3} - 2\sqrt{2} \right) \]
-            \[ B = \lambda a^3 \left( \frac{14}{3} - 2\sqrt{2} \right) \]
-        </li>
-         <li><strong>-D (terme \( I_{xy} \)):</strong>
-             \[ -D = (I_{xy})_1 + (I_{xy})_2 + (I_{xy})_3 \]
-             \[ -D = \left(-\frac{\lambda a^3}{2}\right) + \left(-\frac{3\lambda a^3}{2}\right) + \lambda a^3 \left( -\frac{8}{3} + \sqrt{2} \right) \]
-             \[ -D = \lambda a^3 \left( -\frac{1}{2} - \frac{3}{2} - \frac{8}{3} + \sqrt{2} \right) = \lambda a^3 \left( -2 - \frac{8}{3} + \sqrt{2} \right) \]
-             \[ -D = \lambda a^3 \left( \frac{-6-8}{3} + \sqrt{2} \right) = \lambda a^3 \left( -\frac{14}{3} + \sqrt{2} \right) \]
-             \[ D = \lambda a^3 \left( \frac{14}{3} - \sqrt{2} \right) \]
-         </li>
-          <li><strong>C:</strong>
-             \[ C = C_1 + C_2 + C_3 \]
-             \[ C = \frac{4\lambda a^3}{3} + \frac{10\lambda a^3}{3} + \lambda a^3 \left( \frac{38}{3} + 2\sqrt{2} \right) \]
-             \[ C = \lambda a^3 \left( \frac{4+10+38}{3} + 2\sqrt{2} \right) \]
-             \[ C = \lambda a^3 \left( \frac{52}{3} + 2\sqrt{2} \right) \]
-         </li>
-    </ul>
-    <p><strong>Vérification C = A + B :</strong></p>
-     \[ A + B = \lambda a^3 \left( \frac{38}{3} + 4\sqrt{2} \right) + \lambda a^3 \left( \frac{14}{3} - 2\sqrt{2} \right) \]
-     \[ A + B = \lambda a^3 \left( \frac{38+14}{3} + (4-2)\sqrt{2} \right) \]
-     \[ A + B = \lambda a^3 \left( \frac{52}{3} + 2\sqrt{2} \right) \]
-     \[ A + B = C \quad \text{OK (objet plan).} \]
-
-    <h2>Résultat (Huygens) :</h2>
-     \[ [I_O]_{\text{Huygens}} = \begin{pmatrix} A & -D & 0 \\ -D & B & 0 \\ 0 & 0 & C \end{pmatrix} \]
-     \[ [I_O]_{\text{Huygens}} = \lambda a^3 \begin{pmatrix} \frac{38}{3} + 4\sqrt{2} & -(\frac{14}{3} - \sqrt{2}) & 0 \\ -(\frac{14}{3} - \sqrt{2}) & \frac{14}{3} - 2\sqrt{2} & 0 \\ 0 & 0 & \frac{52}{3} + 2\sqrt{2} \end{pmatrix} \]
-
-     <hr style="page-break-after: always;">
-
-     <h2>Méthode 2: Calcul direct par intégration</h2>
-     <p>Calculons \( A = \int(y^2 + z^2)dm \), \( B = \int(x^2 + z^2)dm \), \( D = \int xydm \). (\( z = 0, E = F = 0 \)). \( dm = \lambda dl \).</p>
-     <ul>
-        <li><strong>Segment 1 (AB):</strong> \( y = a, x \in [0, a], dl = dx. dm = \lambda dx \).
-            \[ A_1 = \int_0^a (a^2 + 0^2) \lambda dx = \lambda a^2 [x]_0^a = \lambda a^3 \]
-            \[ B_1 = \int_0^a (x^2 + 0^2) \lambda dx = \lambda [\frac{x^3}{3}]_0^a = \frac{\lambda a^3}{3} \]
-            \[ D_1 = \int_0^a x(a) \lambda dx = \lambda a [\frac{x^2}{2}]_0^a = \frac{\lambda a^3}{2} \]
-        </li>
-        <li><strong>Segment 2 (BC):</strong> \( x = a, y \in [a, 2a], dl = dy. dm = \lambda dy \).
-             \[ A_2 = \int_a^{2a} (y^2 + 0^2) \lambda dy = \lambda [\frac{y^3}{3}]_a^{2a} = \lambda \left( \frac{8a^3}{3} - \frac{a^3}{3} \right) = \frac{7\lambda a^3}{3} \]
-             \[ B_2 = \int_a^{2a} (a^2 + 0^2) \lambda dy = \lambda a^2 [y]_a^{2a} = \lambda a^2 (2a - a) = \lambda a^3 \]
-             \[ D_2 = \int_a^{2a} a(y) \lambda dy = \lambda a [\frac{y^2}{2}]_a^{2a} = \lambda a \left( \frac{4a^2}{2} - \frac{a^2}{2} \right) = \frac{3\lambda a^3}{2} \]
-        </li>
-        <li><strong>Segment 3 (CD):</strong> Paramétrisation par l'abscisse curviligne \( s \in [0, 2a] \) depuis C.
-            \[ P(s) = C + s \vec{u}_3 = \begin{pmatrix} a \\ 2a \\ 0 \end{pmatrix} + s \begin{pmatrix} -1/\sqrt{2} \\ 1/\sqrt{2} \\ 0 \end{pmatrix} = \begin{pmatrix} a - \frac{s}{\sqrt{2}} \\ 2a + \frac{s}{\sqrt{2}} \\ 0 \end{pmatrix} \]
-            \( x(s) = a - \frac{s}{\sqrt{2}} \), \( y(s) = 2a + \frac{s}{\sqrt{2}} \), \( z(s) = 0 \). \( dm = \lambda ds \).
-            <p>Calcul de A3:</p>
-             \[ A_3 = \int_0^{2a} y(s)^2 \lambda ds = \lambda \int_0^{2a} \left( 2a + \frac{s}{\sqrt{2}} \right)^2 ds \]
-             \[ A_3 = \lambda \int_0^{2a} \left( 4a^2 + \frac{4as}{\sqrt{2}} + \frac{s^2}{2} \right) ds \]
-             \[ A_3 = \lambda \left[ 4a^2s + \frac{4a}{\sqrt{2}}\frac{s^2}{2} + \frac{1}{2}\frac{s^3}{3} \right]_0^{2a} \]
-             \[ A_3 = \lambda \left[ 4a^2(2a) + \frac{2a}{\sqrt{2}}(2a)^2 + \frac{1}{6}(2a)^3 \right] \]
-             \[ A_3 = \lambda \left[ 8a^3 + \frac{8a^3}{\sqrt{2}} + \frac{8a^3}{6} \right] = \lambda \left[ 8a^3 + 4\sqrt{2}a^3 + \frac{4a^3}{3} \right] \]
-             \[ A_3 = \lambda a^3 \left( 8 + 4\sqrt{2} + \frac{4}{3} \right) = \lambda a^3 \left( \frac{24+4}{3} + 4\sqrt{2} \right) \]
-             \[ A_3 = \lambda a^3 \left( \frac{28}{3} + 4\sqrt{2} \right) \]
-             <p>Calcul de B3:</p>
-             \[ B_3 = \int_0^{2a} x(s)^2 \lambda ds = \lambda \int_0^{2a} \left( a - \frac{s}{\sqrt{2}} \right)^2 ds \]
-             \[ B_3 = \lambda \int_0^{2a} \left( a^2 - \frac{2as}{\sqrt{2}} + \frac{s^2}{2} \right) ds \]
-             \[ B_3 = \lambda \left[ a^2s - \frac{2a}{\sqrt{2}}\frac{s^2}{2} + \frac{1}{2}\frac{s^3}{3} \right]_0^{2a} \]
-             \[ B_3 = \lambda \left[ a^2(2a) - \frac{a}{\sqrt{2}}(2a)^2 + \frac{1}{6}(2a)^3 \right] \]
-             \[ B_3 = \lambda \left[ 2a^3 - \frac{4a^3}{\sqrt{2}} + \frac{8a^3}{6} \right] = \lambda \left[ 2a^3 - 2\sqrt{2}a^3 + \frac{4a^3}{3} \right] \]
-             \[ B_3 = \lambda a^3 \left( 2 - 2\sqrt{2} + \frac{4}{3} \right) = \lambda a^3 \left( \frac{6+4}{3} - 2\sqrt{2} \right) \]
-             \[ B_3 = \lambda a^3 \left( \frac{10}{3} - 2\sqrt{2} \right) \]
-             <p>Calcul de D3:</p>
-              \[ D_3 = \int_0^{2a} x(s)y(s) \lambda ds = \lambda \int_0^{2a} \left( a - \frac{s}{\sqrt{2}} \right) \left( 2a + \frac{s}{\sqrt{2}} \right) ds \]
-              \[ D_3 = \lambda \int_0^{2a} \left( 2a^2 + \frac{as}{\sqrt{2}} - \frac{2as}{\sqrt{2}} - \frac{s^2}{2} \right) ds \]
-              \[ D_3 = \lambda \int_0^{2a} \left( 2a^2 - \frac{as}{\sqrt{2}} - \frac{s^2}{2} \right) ds \]
-              \[ D_3 = \lambda \left[ 2a^2s - \frac{a}{\sqrt{2}}\frac{s^2}{2} - \frac{1}{2}\frac{s^3}{3} \right]_0^{2a} \]
-              \[ D_3 = \lambda \left[ 2a^2(2a) - \frac{a}{2\sqrt{2}}(2a)^2 - \frac{1}{6}(2a)^3 \right] \]
-              \[ D_3 = \lambda \left[ 4a^3 - \frac{4a^3}{2\sqrt{2}} - \frac{8a^3}{6} \right] = \lambda \left[ 4a^3 - \sqrt{2}a^3 - \frac{4a^3}{3} \right] \]
-              \[ D_3 = \lambda a^3 \left( 4 - \sqrt{2} - \frac{4}{3} \right) = \lambda a^3 \left( \frac{12-4}{3} - \sqrt{2} \right) \]
-              \[ D_3 = \lambda a^3 \left( \frac{8}{3} - \sqrt{2} \right) \]
-        </li>
-    </ul>
-
-    <h2>Somme des intégrales :</h2>
-    \[ A = A_1 + A_2 + A_3 = \lambda a^3 + \frac{7\lambda a^3}{3} + \lambda a^3 \left( \frac{28}{3} + 4\sqrt{2} \right) = \lambda a^3 \left( \frac{3+7+28}{3} + 4\sqrt{2} \right) = \lambda a^3 \left( \frac{38}{3} + 4\sqrt{2} \right) \]
-    \[ B = B_1 + B_2 + B_3 = \frac{\lambda a^3}{3} + \lambda a^3 + \lambda a^3 \left( \frac{10}{3} - 2\sqrt{2} \right) = \lambda a^3 \left( \frac{1+3+10}{3} - 2\sqrt{2} \right) = \lambda a^3 \left( \frac{14}{3} - 2\sqrt{2} \right) \]
-    \[ D = D_1 + D_2 + D_3 = \frac{\lambda a^3}{2} + \frac{3\lambda a^3}{2} + \lambda a^3 \left( \frac{8}{3} - \sqrt{2} \right) = \lambda a^3 \left( \frac{1+3}{2} + \frac{8}{3} - \sqrt{2} \right) = \lambda a^3 \left( 2 + \frac{8}{3} - \sqrt{2} \right) \]
-    \[ D = \lambda a^3 \left( \frac{6+8}{3} - \sqrt{2} \right) = \lambda a^3 \left( \frac{14}{3} - \sqrt{2} \right) \]
-    \[ C = A + B = \lambda a^3 \left( \frac{38}{3} + 4\sqrt{2} \right) + \lambda a^3 \left( \frac{14}{3} - 2\sqrt{2} \right) = \lambda a^3 \left( \frac{52}{3} + 2\sqrt{2} \right) \quad \text{(Vérifié).} \]
-    <p>E = 0, F = 0.</p>
-
-    <h2>Résultat :</h2>
-    <p>Le tenseur d'inertie au point O est:</p>
-     \[ [I_O]_{1.5} = \lambda a^3 \begin{pmatrix} \frac{38}{3} + 4\sqrt{2} & -(\frac{14}{3} - \sqrt{2}) & 0 \\ -(\frac{14}{3} - \sqrt{2}) & \frac{14}{3} - 2\sqrt{2} & 0 \\ 0 & 0 & \frac{52}{3} + 2\sqrt{2} \end{pmatrix} \]
-     <p>où \( \lambda \) est la densité linéique de masse et \( a \) est une longueur caractéristique.</p>
-
-     <h2>Vérification :</h2>
-     <p>Les résultats des deux méthodes (Additivité/Huygens et Calcul direct) coïncident. ✓</p>
-
-     <hr style="page-break-after: always;">
-
-     <h2 class="figure-title">Figure 1.6 : Anneau circulaire centré en O</h2>
-
-    <figure>
-        <img src="figure6.png" alt="Anneau circulaire centré en O">
-        <figcaption>FIGURE 6 - Anneau circulaire centré en O</figcaption>
-    </figure>
-
-    <p><strong>Méthode requise :</strong> Calcul direct.</p>
-
-    <p><strong>Concepts Clés :</strong></p>
-    <ul>
-        <li><strong>Coordonnées polaires (ou cylindriques) :</strong> Particulièrement adaptées à la géométrie circulaire ou cylindrique. Pour un anneau dans le plan \( z = 0 \), on utilise \( x = R \cos \theta, y = R \sin \theta, z = 0 \). L'élément de longueur est \( dl = R d\theta \).</li>
-        <li><strong>Corps linéique :</strong> \( dm = \lambda dl = \lambda R d\theta \).</li>
-        <li><strong>Axe de Révolution (Oz):</strong> L'anneau possède une symétrie de révolution autour de l'axe Oz. Cela a deux conséquences majeures pour le tenseur d'inertie en O (qui est sur l'axe) :
-            <ol>
-                <li>Oz est un axe principal d'inertie. Plus généralement, tout axe passant par O dans le plan xOy est aussi un axe principal. La matrice d'inertie en O est donc diagonale (\( D = E = F = 0 \)).</li>
-                <li>Les moments d'inertie par rapport à tous les axes passant par O dans le plan perpendiculaire à l'axe de révolution (ici, le plan xOy) sont égaux. Donc \( A = B \).</li>
-            </ol>
-        </li>
-        <li><strong>Plan de symétrie (z=0) :</strong> L'anneau est contenu dans ce plan, qui est un plan de symétrie. Cela implique \( E = I_{xz} = 0 \) et \( F = I_{yz} = 0 \).</li>
-        <li><strong>Intégrales trigonométriques classiques :</strong> Pour \( \theta \in [0, 2\pi] \):
-            \[ \int_0^{2\pi} \sin^2 \theta \, d\theta = \pi \]
-            \[ \int_0^{2\pi} \cos^2 \theta \, d\theta = \pi \]
-            \[ \int_0^{2\pi} \sin \theta \cos \theta \, d\theta = \frac{1}{2} \int_0^{2\pi} \sin(2\theta) \, d\theta = 0 \]
-            \[ \int_0^{2\pi} d\theta = 2\pi \]
-        </li>
-    </ul>
-
-    <h2>Géométrie et Paramétrisation :</h2>
-    <ul>
-        <li>Cercle de rayon R centré en O, dans le plan \( z = 0 \).</li>
-        <li>Point P:
-             \[ P = \begin{pmatrix} R \cos \theta \\ R \sin \theta \\ 0 \end{pmatrix}, \quad \text{avec } \theta \in [0, 2\pi] \]
-        </li>
-         <li>Élément de longueur : \( dl = R d\theta \).</li>
-        <li>Élément de masse : \( dm = \lambda dl = \lambda R d\theta \).</li>
-        <li>Masse totale :
-            \[ M = \int_0^{2\pi} \lambda R d\theta = \lambda R \int_0^{2\pi} d\theta = \lambda R (2\pi) = 2\pi R \lambda \]
-        </li>
-    </ul>
-
-    <h2>Calcul des termes du tenseur :</h2>
-    <ul>
-        <li><strong>Calcul de A:</strong>
-             \[ A = \int (y^2 + z^2) dm \]
-             \[ A = \int_0^{2\pi} ((R\sin \theta)^2 + 0^2) \lambda R d\theta \]
-             \[ A = \lambda R^3 \int_0^{2\pi} \sin^2 \theta d\theta \]
-             \[ A = \lambda R^3 (\pi) \]
-             <p>En utilisant \( M = 2\pi R \lambda \implies \lambda = \frac{M}{2\pi R} \):</p>
-             \[ A = \left( \frac{M}{2\pi R} \right) R^3 \pi = \frac{M R^2}{2} \]
-        </li>
-        <li><strong>Calcul de B:</strong> Par symétrie de révolution autour de Oz, on doit avoir \( A = B \). Vérifions :
-             \[ B = \int (x^2 + z^2) dm \]
-             \[ B = \int_0^{2\pi} ((R\cos \theta)^2 + 0^2) \lambda R d\theta \]
-             \[ B = \lambda R^3 \int_0^{2\pi} \cos^2 \theta d\theta \]
-             \[ B = \lambda R^3 (\pi) \]
-             \[ B = \frac{M R^2}{2} \quad (\text{Comme A, attendu}) \]
-        </li>
-         <li><strong>Calcul de C:</strong>
-             \[ C = \int (x^2 + y^2) dm \]
-             \[ C = \int_0^{2\pi} ((R\cos \theta)^2 + (R\sin \theta)^2) \lambda R d\theta \]
-             \[ C = \int_0^{2\pi} (R^2(\cos^2 \theta + \sin^2 \theta)) \lambda R d\theta \]
-             \[ C = \int_0^{2\pi} R^2 \lambda R d\theta \]
-             \[ C = \lambda R^3 \int_0^{2\pi} d\theta \]
-             \[ C = \lambda R^3 (2\pi) \]
-             \[ C = (2\pi R \lambda) R^2 \]
-             \[ C = M R^2 \]
-             (Vérification du théorème de l'axe perpendiculaire : \( C = A + B = \frac{MR^2}{2} + \frac{MR^2}{2} = MR^2 \). OK.)
-         </li>
-          <li><strong>Calcul de D:</strong>
-             \[ D = \int xy \, dm \]
-             \[ D = \int_0^{2\pi} (R\cos \theta) (R\sin \theta) \lambda R d\theta \]
-             \[ D = \lambda R^3 \int_0^{2\pi} \sin \theta \cos \theta d\theta \]
-             \[ D = \lambda R^3 (0) = 0 \quad (\text{Attendu par symétrie de révolution}) \]
-         </li>
-          <li><strong>Calcul de E et F:</strong>
-             \[ E = \int xz \, dm = \int x(0) dm = 0 \]
-             \[ F = \int yz \, dm = \int y(0) dm = 0 \]
-             (Attendu par symétrie de révolution et plan z=0)
-         </li>
-    </ul>
-
-    <h2>Résultat :</h2>
-    <p>Le tenseur d'inertie de l'anneau au point O est:</p>
-    \[ [I_O]_{1.6} = \begin{pmatrix} \frac{MR^2}{2} & 0 & 0 \\ 0 & \frac{MR^2}{2} & 0 \\ 0 & 0 & MR^2 \end{pmatrix} \]
-
-    <h2>Commentaire :</h2>
-    <p>Le résultat (\( A = B, D = E = F = 0 \)) est cohérent avec la symétrie de révolution autour de Oz. La relation \( C = A + B \) est cohérente avec la nature planaire (\( z = 0 \)) de l'objet.</p>
-
+    <div id="container">
+        <div id="ui-controls">
+            <h1>Pappus's Second Theorem Demo</h1>
+            <p>Surface Area = Total Length (L) * Centroid Path Distance (d)</p>
+
+            <div id="segments-section">
+                <h2>Segments</h2>
+                <button id="addSegmentBtn">Add Segment</button>
+                <div id="segmentsContainer">
+                    <!-- Segment inputs will be added here -->
+                </div>
+            </div>
+
+            <div id="settings-section">
+                <h2>Settings</h2>
+                <label>Axis of Rotation:</label>
+                <label><input type="radio" name="axis" value="x"> X</label>
+                <label><input type="radio" name="axis" value="y" checked> Y</label>
+                <label><input type="radio" name="axis" value="z"> Z</label>
+                <br><br>
+                <label for="revolutionSlider">Revolution Angle:</label>
+                <input type="range" id="revolutionSlider" min="0" max="360" value="360" step="1">
+                <span id="angleValue">360</span>°
+            </div>
+
+            <div id="calculations-section">
+                <h2>Calculations (Full Revolution)</h2>
+                <div>Total Length (L): <span id="totalLength">0.00</span></div>
+                <div>Polyline Centroid (C): <span id="centroidCoords">N/A</span></div>
+                <div>Distance from Centroid to Axis (R): <span id="centroidDistanceR">0.00</span></div>
+                <div>Distance Traveled by Centroid (d = 2πR): <span id="centroidDistanceD">0.00</span></div>
+                <div>Calculated Surface Area (Area = L * d): <span id="surfaceArea">0.00</span></div>
+            </div>
+             <div id="instructions">
+                <p><strong>Instructions:</strong></p>
+                <ul>
+                    <li>Use 'Add Segment' to define points (e.g., P1=(0,1,0), P2=(1,1,0)).</li>
+                    <li>Use mouse (left-drag: rotate, right-drag: pan, wheel: zoom) to view.</li>
+                    <li>Select rotation axis (X, Y, or Z).</li>
+                    <li>Adjust the slider to see partial revolution.</li>
+                    <li>Calculations update automatically for the full 360° revolution.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="visualization-container">
+            <canvas id="visualizationCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- Template for segment input fields -->
+    <template id="segmentTemplate">
+        <div class="segment-input">
+            <hr>
+            <button class="removeSegmentBtn">Remove Segment</button>
+            <div>
+                P1:
+                (X:<input type="number" class="coord p1x" value="0" step="0.1">,
+                 Y:<input type="number" class="coord p1y" value="0" step="0.1">,
+                 Z:<input type="number" class="coord p1z" value="0" step="0.1">)
+            </div>
+             <div>
+                P2:
+                (X:<input type="number" class="coord p2x" value="1" step="0.1">,
+                 Y:<input type="number" class="coord p2y" value="1" step="0.1">,
+                 Z:<input type="number" class="coord p2z" value="0" step="0.1">)
+            </div>
+        </div>
+    </template>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
