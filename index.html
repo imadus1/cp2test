@@ -3,209 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pappus's Second Theorem Visualization (Combined)</title>
+    <title>Pappus's Theorem - Realistic Surfaces</title>
 
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            overflow: hidden; /* Prevent scrollbars from main page */
-            background-color: #f0f0f0;
-            display: flex;
-        }
-
-        #container {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        #ui-controls {
-            width: 380px; /* Slightly wider for better layout */
-            padding: 15px;
-            background-color: #e9e9e9;
-            overflow-y: auto; /* Allow scrolling if UI gets too long */
-            height: 100vh;
-            box-sizing: border-box; /* Include padding in width/height */
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #ccc;
-        }
-
-        #visualization-container {
-            flex-grow: 1; /* Takes remaining width */
-            height: 100vh;
-            position: relative; /* Needed for absolute positioning of canvas */
-        }
-
-        #visualizationCanvas {
-            display: block; /* Remove extra space below canvas */
-            width: 100%;
-            height: 100%;
-        }
-
-        h1, h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            color: #333;
-        }
-         h1 { font-size: 1.4em; }
-         h2 { font-size: 1.1em; }
-
-        #segments-section, #settings-section, #calculations-section, #instructions {
-            margin-bottom: 15px;
-            padding: 12px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        button {
-            padding: 8px 15px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            background-color: #007bff; /* Bootstrap primary */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .removeSegmentBtn {
-            background-color: #dc3545; /* Bootstrap danger */
-            float: right;
-            margin-left: 10px;
-            padding: 4px 8px;
-            font-size: 0.8em;
-        }
-
-        .removeSegmentBtn:hover {
-            background-color: #c82333;
-        }
-
-        label {
-            margin-right: 5px; /* Reduced margin */
-            display: inline-block; /* Ensure proper alignment */
-            margin-bottom: 5px; /* Spacing for radio/checkbox labels */
-        }
-
-        input[type="number"] {
-            width: 55px; /* Slightly wider */
-            padding: 5px;
-            margin: 0 2px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-
-        input[type="range"] {
-            width: 180px; /* Wider slider */
-            vertical-align: middle;
-        }
-
-        #angleValue {
-            display: inline-block;
-            width: 35px;
-            text-align: right;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-
-        #calculations-section div {
-            margin-bottom: 6px;
-            font-size: 0.95em;
-            line-height: 1.4;
-        }
-
-        #calculations-section span {
-            font-weight: bold;
-            color: #0056b3;
-            background-color: #eef;
-            padding: 1px 4px;
-            border-radius: 3px;
-            display: inline-block; /* Prevents awkward line breaks */
-            min-width: 40px; /* Ensure some space */
-            text-align: right;
-        }
-        #centroidCoords {
-             min-width: 150px;
-             text-align: left;
-        }
-
-
-        .segment-input {
-            margin-bottom: 15px;
-            padding: 12px;
-            border: 1px dashed #ccc;
-            border-radius: 3px;
-            background-color: #fdfdfd; /* Slightly off-white */
-        }
-        .segment-input > div { /* Direct div children */
-            margin-bottom: 5px;
-            display: flex; /* Align label and inputs */
-            align-items: center;
-        }
-         .segment-input > div > span { /* Label like P1: */
-            width: 30px;
-            font-weight: bold;
-            margin-right: 5px;
-         }
-
-
-        hr {
-            border: none;
-            border-top: 1px solid #eee;
-            margin: 15px 0; /* More spacing */
-        }
-
-         #instructions {
-            background-color: #f0f8ff; /* Light blue background */
-            border-color: #cce5ff; /* Blue border */
-         }
-
-        #instructions ul {
-            padding-left: 20px;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-            color: #333;
-        }
-        #instructions li {
-             margin-bottom: 5px;
-        }
-         #instructions strong {
-            color: #004085; /* Darker blue */
-         }
-
-        /* Style for radio button groups */
-        #settings-section > div {
-             margin-bottom: 10px;
-        }
-         #settings-section > div > label:first-child { /* "Axis of Rotation:" */
-            font-weight: bold;
-            margin-right: 10px;
-            min-width: 120px; /* Align radio groups */
-            display: inline-block;
-         }
-         #settings-section > div > label > input[type="radio"] {
-             margin-right: 3px;
-             vertical-align: middle;
-         }
-         #settings-section label[for="revolutionSlider"] {
-             font-weight: bold;
-             min-width: 120px;
-             display: inline-block;
-         }
+        /* CSS styles remain the same as the previous version */
+        body { font-family: sans-serif; margin: 0; overflow: hidden; background-color: #f0f0f0; display: flex; }
+        #container { display: flex; width: 100vw; height: 100vh; }
+        #ui-controls { width: 380px; padding: 15px; background-color: #e9e9e9; overflow-y: auto; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; border-right: 1px solid #ccc; }
+        #visualization-container { flex-grow: 1; height: 100vh; position: relative; }
+        #visualizationCanvas { display: block; width: 100%; height: 100%; }
+        h1, h2 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 5px; color: #333; }
+        h1 { font-size: 1.4em; } h2 { font-size: 1.1em; }
+        #segments-section, #settings-section, #calculations-section, #instructions { margin-bottom: 15px; padding: 12px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        button { padding: 8px 15px; margin-bottom: 10px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; }
+        button:hover { background-color: #0056b3; }
+        .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 4px 8px; font-size: 0.8em; }
+        .removeSegmentBtn:hover { background-color: #c82333; }
+        label { margin-right: 5px; display: inline-block; margin-bottom: 5px; }
+        input[type="number"] { width: 60px; padding: 5px 4px; margin: 2px 3px 2px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; }
+        input[type="range"] { width: 180px; vertical-align: middle; }
+        #angleValue { display: inline-block; width: 35px; text-align: right; font-weight: bold; margin-left: 5px; }
+        #calculations-section div { margin-bottom: 6px; font-size: 0.95em; line-height: 1.4; }
+        #calculations-section span { font-weight: bold; color: #0056b3; background-color: #eef; padding: 1px 4px; border-radius: 3px; display: inline-block; min-width: 40px; text-align: right; }
+        #centroidCoords { min-width: 150px; text-align: left; }
+        .segment-input { margin-bottom: 15px; padding: 10px; border: 1px dashed #ccc; border-radius: 3px; background-color: #fdfdfd; }
+        .point-input-group { display: flex; align-items: center; margin-bottom: 5px; }
+        .point-input-group > span { font-weight: bold; margin-right: 8px; min-width: 25px; text-align: right; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
+        hr { border: none; border-top: 1px solid #eee; margin: 15px 0; }
+        #instructions { background-color: #f0f8ff; border-color: #cce5ff; }
+        #instructions ul { padding-left: 20px; margin-top: 5px; margin-bottom: 5px; font-size: 0.9em; color: #333; }
+        #instructions li { margin-bottom: 5px; }
+        #instructions strong { color: #004085; }
+        #settings-section > div { margin-bottom: 10px; }
+        #settings-section > div > label:first-child { font-weight: bold; margin-right: 10px; min-width: 120px; display: inline-block; }
+        #settings-section > div > label > input[type="radio"] { margin-right: 3px; vertical-align: middle; }
+        #settings-section label[for="revolutionSlider"] { font-weight: bold; min-width: 120px; display: inline-block; }
     </style>
 
-    <!-- Import maps for Three.js modules (use CDN links) -->
     <script type="importmap">
         {
             "imports": {
@@ -217,74 +52,33 @@
 </head>
 <body>
     <div id="container">
-        <div id="ui-controls">
+         <div id="ui-controls">
+            <!-- UI sections -->
             <h1>Pappus's Theorem II</h1>
             <p>Surface Area = Total Length (L) × Centroid Path Distance (d)</p>
-
-            <div id="segments-section">
-                <h2>Segments</h2>
-                <button id="addSegmentBtn">Add Segment</button>
-                <div id="segmentsContainer">
-                    <!-- Segment inputs will be added here -->
-                </div>
-            </div>
-
-            <div id="settings-section">
-                <h2>Settings</h2>
-                 <div>
-                    <label>Axis of Rotation:</label>
-                    <label><input type="radio" name="axis" value="x"> X</label>
-                    <label><input type="radio" name="axis" value="y" checked> Y</label>
-                    <label><input type="radio" name="axis" value="z"> Z</label>
-                 </div>
-                 <div>
-                    <label for="revolutionSlider">Revolution Angle:</label>
-                    <input type="range" id="revolutionSlider" min="0" max="360" value="360" step="1">
-                    <span id="angleValue">360</span>°
-                 </div>
-            </div>
-
-            <div id="calculations-section">
-                <h2>Calculations (Full 360° Revolution)</h2>
-                <div>Total Length (L): <span id="totalLength">0.00</span></div>
-                <div>Polyline Centroid (C): <span id="centroidCoords">N/A</span></div>
-                <div>Dist. Centroid to Axis (R): <span id="centroidDistanceR">0.00</span></div>
-                <div>Dist. Traveled by C (d = 2πR): <span id="centroidDistanceD">0.00</span></div>
-                <div>Calculated Surface Area (L × d): <span id="surfaceArea">0.00</span></div>
-            </div>
-             <div id="instructions">
-                <p><strong>Instructions:</strong></p>
-                <ul>
-                    <li>Use 'Add Segment' to define points (e.g., P1=(0,1,0), P2=(1,1,0)).</li>
-                    <li>Remove segments using the 'Remove' button.</li>
-                    <li>Use mouse (Left-drag: rotate, Right-drag: pan, Wheel: zoom) to view.</li>
-                    <li>Select rotation axis (X, Y, or Z).</li>
-                    <li>Adjust the slider to see partial revolution.</li>
-                    <li>Calculations update automatically based on the full 360° revolution.</li>
-                </ul>
-            </div>
+            <div id="segments-section"><h2>Segments</h2><button id="addSegmentBtn">Add Segment</button><div id="segmentsContainer"></div></div>
+            <div id="settings-section"><h2>Settings</h2><div><label>Axis of Rotation:</label><label><input type="radio" name="axis" value="x"> X</label><label><input type="radio" name="axis" value="y" checked> Y</label><label><input type="radio" name="axis" value="z"> Z</label></div><div><label for="revolutionSlider">Revolution Angle:</label><input type="range" id="revolutionSlider" min="0" max="360" value="360" step="1"><span id="angleValue">360</span>°</div></div>
+            <div id="calculations-section"><h2>Calculations (Full 360° Revolution)</h2><div>Total Length (L): <span id="totalLength">0.000</span></div><div>Polyline Centroid (C): <span id="centroidCoords">N/A</span></div><div>Dist. Centroid to Axis (R): <span id="centroidDistanceR">0.000</span></div><div>Dist. Traveled by C (d = 2πR): <span id="centroidDistanceD">0.000</span></div><div>Calculated Surface Area (L × d): <span id="surfaceArea">0.000</span></div></div>
+            <div id="instructions"><p><strong>Instructions:</strong></p><ul><li>Use 'Add Segment' to define points. Each segment generates its own surface.</li><li>Remove segments using the 'Remove' button.</li><li>Use mouse (Left-drag: rotate, Right-drag: pan, Wheel: zoom) to view.</li><li>Select rotation axis (X, Y, or Z).</li><li>Adjust the slider to see partial revolution.</li><li>Calculations update automatically based on the full 360° revolution of the entire polyline.</li></ul></div>
         </div>
-
-        <div id="visualization-container">
-            <canvas id="visualizationCanvas"></canvas>
-        </div>
+        <div id="visualization-container"><canvas id="visualizationCanvas"></canvas></div>
     </div>
 
-    <!-- Template for segment input fields -->
+    <!-- Segment Template (Same) -->
     <template id="segmentTemplate">
         <div class="segment-input">
             <button class="removeSegmentBtn">Remove</button>
-            <div>
+            <div class="point-input-group">
                 <span>P1:</span>
-                (X:<input type="number" class="coord p1x" value="0" step="0.1">,
-                 Y:<input type="number" class="coord p1y" value="0" step="0.1">,
-                 Z:<input type="number" class="coord p1z" value="0" step="0.1">)
+                <input type="number" class="coord p1x" value="0" step="0.1" placeholder="X" title="P1 X">
+                <input type="number" class="coord p1y" value="0" step="0.1" placeholder="Y" title="P1 Y">
+                <input type="number" class="coord p1z" value="0" step="0.1" placeholder="Z" title="P1 Z">
             </div>
-             <div>
+             <div class="point-input-group">
                  <span>P2:</span>
-                (X:<input type="number" class="coord p2x" value="1" step="0.1">,
-                 Y:<input type="number" class="coord p2y" value="1" step="0.1">,
-                 Z:<input type="number" class="coord p2z" value="0" step="0.1">)
+                <input type="number" class="coord p2x" value="1" step="0.1" placeholder="X" title="P2 X">
+                <input type="number" class="coord p2y" value="1" step="0.1" placeholder="Y" title="P2 Y">
+                <input type="number" class="coord p2z" value="0" step="0.1" placeholder="Z" title="P2 Z">
             </div>
         </div>
     </template>
@@ -292,557 +86,183 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        // Removed CSS2DRenderer imports as we'll use Sprites
 
-        // --- Global Variables ---
+        // --- Global Variables --- (Same)
         let scene, camera, renderer, controls;
-        let segmentsData = []; // Stores { p1: Vector3, p2: Vector3, length: number, centroid: Vector3 }
-        let segmentLines = []; // Stores THREE.Line objects
-        let surfaceMesh = null;
-        let axisOfRotation = 'y'; // 'x', 'y', or 'z'
-        let revolutionAngle = 360; // degrees
-        let axisHelper, rotationAxisLine, centroidPathVisual;
-        let axisLabels = []; // To store sprite labels
+        let segmentsData = []; let segmentLines = []; let surfaceMeshes = [];
+        let axisOfRotation = 'y'; let revolutionAngle = 360;
+        let axisHelper, rotationAxisLine, centroidPathVisual; let axisLabels = [];
+        let sharedSurfaceMaterial; // *** Variable to hold the shared material ***
 
-        // --- Constants ---
-        const SEGMENT_COLOR = 0x0000ff; // Blue
-        const SURFACE_COLOR = 0xffa500; // Orange
-        const AXIS_COLOR = 0xff0000; // Red (Selected Axis)
-        const CENTROID_PATH_COLOR = 0x00ff00; // Green
-        const RADIAL_SEGMENTS = 32; // For surface smoothness
-        const CENTROID_PATH_RADIUS = 0.05; // Thickness of centroid path torus
-        const AXIS_LABEL_OFFSET = 6.0; // How far labels are from origin
-        const AXIS_LABEL_SIZE = 1.5; // Scale factor for labels
+        // --- Constants --- (Same)
+        const SEGMENT_COLOR = 0x0000ff; const SURFACE_COLOR = 0xffa500; const AXIS_COLOR = 0xff0000; const CENTROID_PATH_COLOR = 0x00ff00;
+        const RADIAL_SEGMENTS = 32; const CENTROID_PATH_SEGMENTS = 64;
+        const AXIS_LABEL_OFFSET = 6.0; const AXIS_LABEL_SIZE = 1.5;
 
-        // --- DOM Elements ---
-        const segmentsContainer = document.getElementById('segmentsContainer');
-        const addSegmentBtn = document.getElementById('addSegmentBtn');
-        const segmentTemplate = document.getElementById('segmentTemplate');
-        const revolutionSlider = document.getElementById('revolutionSlider');
-        const angleValueSpan = document.getElementById('angleValue');
-        const axisRadios = document.querySelectorAll('input[name="axis"]');
-        // Calculation display spans
-        const totalLengthSpan = document.getElementById('totalLength');
-        const centroidCoordsSpan = document.getElementById('centroidCoords');
-        const centroidDistanceRSpan = document.getElementById('centroidDistanceR');
-        const centroidDistanceDSpan = document.getElementById('centroidDistanceD');
-        const surfaceAreaSpan = document.getElementById('surfaceArea');
+        // --- DOM Elements --- (Same)
+        const segmentsContainer = document.getElementById('segmentsContainer'); const addSegmentBtn = document.getElementById('addSegmentBtn'); const segmentTemplate = document.getElementById('segmentTemplate'); const revolutionSlider = document.getElementById('revolutionSlider'); const angleValueSpan = document.getElementById('angleValue'); const axisRadios = document.querySelectorAll('input[name="axis"]'); const totalLengthSpan = document.getElementById('totalLength'); const centroidCoordsSpan = document.getElementById('centroidCoords'); const centroidDistanceRSpan = document.getElementById('centroidDistanceR'); const centroidDistanceDSpan = document.getElementById('centroidDistanceD'); const surfaceAreaSpan = document.getElementById('surfaceArea');
+
+        // --- Rotation Axis Vectors --- (Same)
+        const AXIS_VECTORS = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 
         // --- Initialization ---
         function init() {
-            // Scene
+            // Scene, Camera, Renderer, Lights, Controls setup (same basic setup)
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xf4f4f4); // Lighter background
+            scene.background = new THREE.Color(0xcccccc); // Slightly darker background might show reflections better
 
-            // Camera
             const vizContainer = document.getElementById('visualization-container');
             camera = new THREE.PerspectiveCamera(60, vizContainer.clientWidth / vizContainer.clientHeight, 0.1, 1000);
-            camera.position.set(6, 6, 12); // Adjusted initial camera position
-            camera.lookAt(0, 0, 0);
-
-
-            // Renderer
+            camera.position.set(6, 6, 12); camera.lookAt(0, 0, 0);
             const canvas = document.getElementById('visualizationCanvas');
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setPixelRatio(window.devicePixelRatio); // For sharper rendering on high DPI screens
-            // Adjust renderer size initially and on resize
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping; // Use tone mapping for better HDR handling if using HDR env maps
+            renderer.toneMappingExposure = 1.0;
             resizeRenderer();
-
-
-            // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Slightly brighter ambient
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Lower ambient if env map provides light
             scene.add(ambientLight);
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
-            directionalLight1.position.set(5, 10, 7.5);
-            scene.add(directionalLight1);
-            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3); // Add another light from different angle
-            directionalLight2.position.set(-5, -5, -5);
-            scene.add(directionalLight2);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8); // Keep directional lights for highlights
+            directionalLight1.position.set(5, 10, 7.5); scene.add(directionalLight1);
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-5, -5, -5); scene.add(directionalLight2);
+            controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.05; controls.minDistance = 1; controls.maxDistance = 100; controls.maxPolarAngle = Math.PI;
 
-
-            // Controls
-            controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.screenSpacePanning = false;
-            controls.minDistance = 1;
-            controls.maxDistance = 100; // Increased max distance
-            controls.maxPolarAngle = Math.PI; // Allow viewing from below
-
-            // Helpers
-            axisHelper = new THREE.AxesHelper(5); // X=red, Y=green, Z=blue
-            scene.add(axisHelper);
-
-            // Axis Labels (using Sprites)
-            createAxisLabels();
-
-
-            // Add initial axis highlight
-            createRotationAxisLine();
-
-            // Event Listeners
-            addSegmentBtn.addEventListener('click', addSegmentUI);
-            segmentsContainer.addEventListener('input', handleSegmentInputChange); // Use event delegation
-            segmentsContainer.addEventListener('click', handleRemoveSegmentClick); // Use event delegation
-            revolutionSlider.addEventListener('input', handleRevolutionSlider);
-            axisRadios.forEach(radio => radio.addEventListener('change', handleAxisChange));
-            window.addEventListener('resize', resizeRenderer); // Handle window resize
-
-            // Add a default segment for quick start
-            addSegmentUI(); // Add the first segment UI
-            // Set some initial default values for the first segment
-            const firstSegInputs = segmentsContainer.querySelector('.segment-input');
-            if (firstSegInputs) {
-                firstSegInputs.querySelector('.p1y').value = 1;
-                firstSegInputs.querySelector('.p2x').value = 1;
-                firstSegInputs.querySelector('.p2y').value = 2;
-            }
-
-            updateVisualizationAndCalculations(); // Initial calculation and render
-
-            // Start animation loop
-            animate();
-        }
-
-        function resizeRenderer() {
-            const vizContainer = document.getElementById('visualization-container');
-            const width = vizContainer.clientWidth;
-            const height = vizContainer.clientHeight;
-
-            if (width === 0 || height === 0) return; // Avoid issues when container is hidden/zero-sized
-
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        }
-
-
-        // --- UI Management ---
-        function addSegmentUI() {
-            const templateContent = segmentTemplate.content.cloneNode(true);
-            segmentsContainer.appendChild(templateContent);
-            // No need to add listeners here due to event delegation
-            updateVisualizationAndCalculations(); // Update after adding default values
-        }
-
-        function handleSegmentInputChange(event) {
-            if (event.target.classList.contains('coord')) {
-                // Basic validation: ensure numeric value or default to 0
-                if (isNaN(parseFloat(event.target.value))) {
-                    // event.target.value = 0; // Or provide visual feedback
-                }
-                updateVisualizationAndCalculations();
-            }
-        }
-
-        function handleRemoveSegmentClick(event) {
-            if (event.target.classList.contains('removeSegmentBtn')) {
-                event.target.closest('.segment-input').remove();
-                updateVisualizationAndCalculations();
-            }
-        }
-
-        function handleRevolutionSlider(event) {
-            revolutionAngle = parseFloat(event.target.value);
-            angleValueSpan.textContent = revolutionAngle;
-            // Only redraw the surface and update path visibility
-            clearSurfaceMesh();
-            drawSurfaceOfRevolution();
-             if (centroidPathVisual) {
-                centroidPathVisual.visible = (revolutionAngle === 360); // Only show full path at 360
-            }
-        }
-
-        function handleAxisChange(event) {
-            axisOfRotation = event.target.value;
-            updateVisualizationAndCalculations();
-        }
-
-        // --- Data Parsing ---
-        function parseSegmentsFromUI() {
-            segmentsData = [];
-            const segmentDivs = segmentsContainer.querySelectorAll('.segment-input');
-
-            segmentDivs.forEach(div => {
-                const p1 = new THREE.Vector3(
-                    parseFloat(div.querySelector('.p1x').value) || 0,
-                    parseFloat(div.querySelector('.p1y').value) || 0,
-                    parseFloat(div.querySelector('.p1z').value) || 0
-                );
-                const p2 = new THREE.Vector3(
-                    parseFloat(div.querySelector('.p2x').value) || 0,
-                    parseFloat(div.querySelector('.p2y').value) || 0,
-                    parseFloat(div.querySelector('.p2z').value) || 0
-                );
-
-                // Basic validation: ignore segments with identical endpoints
-                if (p1.distanceTo(p2) > 1e-6) { // Use epsilon for float comparison
-                    const length = p1.distanceTo(p2);
-                    const centroid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
-                    segmentsData.push({ p1, p2, length, centroid });
-                }
+            // *** Load Environment Map ***
+            const loader = new THREE.CubeTextureLoader();
+            // !!! REPLACE THESE PATHS with your actual cube map image paths !!!
+            // Example using generic placeholders. Get images from Poly Haven (e.g., 'dikhololo_night_1k') or other sources.
+            // Order: +X (px), -X (nx), +Y (py), -Y (ny), +Z (pz), -Z (nz)
+            const textureCube = loader.setPath('./textures/cube/bridge2/').load( [ // Assumes a 'textures/cube/bridge2/' folder exists relative to the HTML
+                'posx.jpg', 'negx.jpg',
+                'posy.jpg', 'negy.jpg',
+                'posz.jpg', 'negz.jpg'
+            ], () => {
+                console.log("Environment map loaded.");
+                // Optional: Re-render once after texture loads if needed, though scene.environment update handles it.
+                // updateVisualizationAndCalculations();
+            }, undefined, (error) => {
+                 console.error("Error loading environment map:", error);
+                 // Provide fallback or notification
+                 alert("Could not load environment map textures. Reflections may not appear correctly. Check texture paths and ensure images exist.");
             });
-        }
-
-        // --- Calculations ---
-        function calculatePolylineProperties() {
-            let totalLength = 0;
-            let weightedCentroidSum = new THREE.Vector3(0, 0, 0);
-
-            segmentsData.forEach(seg => {
-                totalLength += seg.length;
-                // Accumulate sum of (segment_centroid * segment_length)
-                weightedCentroidSum.addScaledVector(seg.centroid, seg.length);
-            });
-
-            // Overall centroid is Sum(Ci * Li) / Sum(Li)
-            const polylineCentroid = totalLength > 0 ? weightedCentroidSum.divideScalar(totalLength) : new THREE.Vector3(0, 0, 0);
-
-            return { totalLength, polylineCentroid };
-        }
-
-        function getDistanceToAxis(point, axis) {
-            switch (axis) {
-                case 'x': return Math.sqrt(point.y * point.y + point.z * point.z);
-                case 'y': return Math.sqrt(point.x * point.x + point.z * point.z);
-                case 'z': return Math.sqrt(point.x * point.x + point.y * point.y);
-                default: return 0;
-            }
-        }
-
-        function calculatePappusValues(totalLength, polylineCentroid, axis) {
-            if (totalLength === 0) {
-                return { R: 0, d: 0, area: 0 };
-            }
-            // R is the perpendicular distance from the polyline's centroid to the axis
-            const R = getDistanceToAxis(polylineCentroid, axis);
-            // d is the distance traveled by the centroid in a full circle
-            const d = 2 * Math.PI * R;
-            // Area = Total Length * Distance traveled by Centroid
-            const area = totalLength * d;
-            return { R, d, area };
-        }
-
-        // --- 3D Visualization ---
-        function clearSceneGeometry() {
-            // Remove segment lines
-            segmentLines.forEach(line => scene.remove(line));
-            segmentLines = [];
-            // Remove surface mesh
-            clearSurfaceMesh();
-            // Remove axis highlight line
-            if (rotationAxisLine) scene.remove(rotationAxisLine);
-            rotationAxisLine = null;
-            // Remove centroid path
-            clearCentroidPathVisual();
-            // Note: Axis labels are not cleared here, only created once in init
-        }
-
-        function clearSurfaceMesh() {
-            if (surfaceMesh) {
-                scene.remove(surfaceMesh);
-                if (surfaceMesh.geometry) surfaceMesh.geometry.dispose();
-                if (surfaceMesh.material) surfaceMesh.material.dispose();
-                surfaceMesh = null;
-            }
-        }
-
-        function clearCentroidPathVisual() {
-            if (centroidPathVisual) {
-                scene.remove(centroidPathVisual);
-                 if (centroidPathVisual.geometry) centroidPathVisual.geometry.dispose();
-                if (centroidPathVisual.material) centroidPathVisual.material.dispose();
-                centroidPathVisual = null;
-            }
-        }
-
-        function drawSegments() {
-            // Use TubeGeometry for thicker, more visible lines
-            const tubeRadius = 0.03;
-            const tubeSegments = 8;
-            const material = new THREE.MeshStandardMaterial({
-                 color: SEGMENT_COLOR,
-                 metalness: 0.1,
-                 roughness: 0.7
-                });
-
-            segmentsData.forEach(seg => {
-                const path = new THREE.LineCurve3(seg.p1, seg.p2);
-                const geometry = new THREE.TubeGeometry(path, 1, tubeRadius, tubeSegments, false);
-                const mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-                segmentLines.push(mesh); // Store mesh instead of line
-            });
-        }
+            scene.environment = textureCube; // Set scene environment for PBR lighting/reflections
 
 
-        function createRotationAxisLine() {
-            if (rotationAxisLine) scene.remove(rotationAxisLine);
-
-            const material = new THREE.LineBasicMaterial({ color: AXIS_COLOR, linewidth: 2 }); // Linewidth might be limited
-            let points = [];
-            const length = 1000; // Make it very long to simulate infinite axis
-
-            switch (axisOfRotation) {
-                case 'x':
-                    points = [new THREE.Vector3(-length, 0, 0), new THREE.Vector3(length, 0, 0)];
-                    break;
-                case 'y':
-                    points = [new THREE.Vector3(0, -length, 0), new THREE.Vector3(0, length, 0)];
-                    break;
-                case 'z':
-                    points = [new THREE.Vector3(0, 0, -length), new THREE.Vector3(0, 0, length)];
-                    break;
-            }
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-            rotationAxisLine = new THREE.Line(geometry, material);
-            rotationAxisLine.renderOrder = 1; // Try to render on top
-            scene.add(rotationAxisLine);
-        }
-
-        // Creates text sprites for X, Y, Z labels
-        function createAxisLabel(text, position, color) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            const fontSize = 48; // High resolution for clarity
-            context.font = `Bold ${fontSize}px Arial`;
-
-            // Measure text and set canvas size
-            const metrics = context.measureText(text);
-            const textWidth = metrics.width;
-            const textHeight = fontSize; // Approximate height
-            canvas.width = textWidth + 20; // Add padding
-            canvas.height = textHeight + 10;
-
-            // Redraw text (required after resizing canvas)
-            context.font = `Bold ${fontSize}px Arial`;
-            context.fillStyle = color;
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.needsUpdate = true;
-
-            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); // depthTest: false keeps labels visible
-            const sprite = new THREE.Sprite(material);
-
-            // Scale the sprite
-            const aspect = canvas.width / canvas.height;
-            sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); // Adjust scale factor
-
-            sprite.position.copy(position);
-            sprite.renderOrder = 2; // Render labels on top of axis line
-            scene.add(sprite);
-            return sprite;
-        }
-
-        function createAxisLabels() {
-            axisLabels.push(createAxisLabel('X', new THREE.Vector3(AXIS_LABEL_OFFSET, 0, 0), '#FF0000')); // Red
-            axisLabels.push(createAxisLabel('Y', new THREE.Vector3(0, AXIS_LABEL_OFFSET, 0), '#00FF00')); // Green
-            axisLabels.push(createAxisLabel('Z', new THREE.Vector3(0, 0, AXIS_LABEL_OFFSET), '#0000FF')); // Blue
-        }
-
-
-        // Maps a 3D point to a 2D point (radius, height) for LatheGeometry, relative to the specified axis.
-        // LatheGeometry always revolves around its internal Y-axis.
-        function map3DPointToLathePoint(point, axis) {
-            let radius, height;
-            switch (axis) {
-                case 'x': // Revolving around World X
-                    radius = Math.sqrt(point.y * point.y + point.z * point.z); // Distance from X axis
-                    height = point.x; // Position along X axis
-                    break;
-                case 'y': // Revolving around World Y
-                    radius = Math.sqrt(point.x * point.x + point.z * point.z); // Distance from Y axis
-                    height = point.y; // Position along Y axis
-                    break;
-                case 'z': // Revolving around World Z
-                    radius = Math.sqrt(point.x * point.x + point.y * point.y); // Distance from Z axis
-                    height = point.z; // Position along Z axis
-                    break;
-                default:
-                    radius = 0; height = 0;
-            }
-            // LatheGeometry expects non-negative radius in its local X coordinate, height in its local Y coordinate.
-            return new THREE.Vector2(Math.max(0, radius), height);
-        }
-
-
-        function drawSurfaceOfRevolution() {
-            if (segmentsData.length === 0) return;
-
-            // 1. Create the ordered profile points for LatheGeometry
-            const lathePoints = [];
-            // Start with the first point of the first segment
-            lathePoints.push(map3DPointToLathePoint(segmentsData[0].p1, axisOfRotation));
-            // Add the second point of each subsequent segment in order
-            segmentsData.forEach(seg => {
-                lathePoints.push(map3DPointToLathePoint(seg.p2, axisOfRotation));
-            });
-
-            // Remove consecutive duplicate points (within epsilon) as LatheGeometry might error
-            const uniqueLathePoints = [];
-            if(lathePoints.length > 0) {
-                uniqueLathePoints.push(lathePoints[0]);
-                for(let i = 1; i < lathePoints.length; i++) {
-                    if(lathePoints[i].distanceTo(lathePoints[i-1]) > 1e-5) {
-                        uniqueLathePoints.push(lathePoints[i]);
-                    }
-                }
-            }
-
-            // Need at least two distinct points to form a surface
-            if (uniqueLathePoints.length < 2) {
-                 console.warn("Need at least 2 unique points projected onto the lathe plane to create a surface.");
-                 return;
-            }
-
-             // Check if all points have radius close to zero (polyline lies on the axis)
-             const allOnAxis = uniqueLathePoints.every(p => p.x < 1e-6);
-             if (allOnAxis) {
-                 console.warn("Polyline lies on the axis of rotation. Surface area is zero.");
-                 return; // No surface to draw
-             }
-
-
-            // 2. Create Lathe Geometry
-            // It revolves the points (radius, height) around the local Y axis.
-            const angleRad = THREE.MathUtils.degToRad(revolutionAngle);
-            let geometry;
-             try {
-                geometry = new THREE.LatheGeometry(uniqueLathePoints, RADIAL_SEGMENTS, 0, angleRad);
-             } catch (error) {
-                 console.error("Error creating LatheGeometry:", error, uniqueLathePoints);
-                 return; // Stop if geometry creation fails
-             }
-
-            // 3. Create Material
-            const material = new THREE.MeshStandardMaterial({
+            // *** Create Shared Surface Material ***
+            sharedSurfaceMaterial = new THREE.MeshStandardMaterial({
                 color: SURFACE_COLOR,
                 transparent: true,
-                opacity: 0.65, // Slightly more opaque
-                side: THREE.DoubleSide, // Render both sides
-                metalness: 0.1,
-                roughness: 0.8,
-                // wireframe: true // Optional: for debugging shape
+                opacity: 0.65,         // Adjust opacity (0.0 to 1.0)
+                side: THREE.DoubleSide,
+                metalness: 0.2,         // Low metalness for non-metal look (0.0 to 1.0)
+                roughness: 0.3,         // Lower roughness for sharper reflections (0.0 to 1.0)
+                envMapIntensity: 1.0,   // Intensity of environment map reflection
+                refractionRatio: 0.95, // Simulate slight light bending (0.0 to 1.0) - subtle effect
+                // depthWrite: false // Sometimes needed for complex transparency sorting, test if issues arise
             });
 
-            // 4. Create Mesh
-            surfaceMesh = new THREE.Mesh(geometry, material);
 
-            // 5. Orient the Mesh based on the chosen world axis of rotation
-            // Since LatheGeometry revolves around its *local Y axis*, we rotate the resulting
-            // mesh to align this local Y axis (the 'height' axis of the lathe profile)
-            // with the *chosen world axis* (X or Z). No rotation needed if axis is Y.
-            switch (axisOfRotation) {
-                case 'x':
-                    // Rotate the mesh so its local Y-axis aligns with the world X-axis.
-                    surfaceMesh.rotation.z = -Math.PI / 2; // Rotate -90 degrees around World Z
-                    break;
-                case 'y':
-                    // No rotation needed, Lathe's local Y already aligns with World Y.
-                    break;
-                case 'z':
-                    // Rotate the mesh so its local Y-axis aligns with the World Z-axis.
-                    surfaceMesh.rotation.x = Math.PI / 2; // Rotate 90 degrees around World X
-                    break;
-            }
-            // Crucial: Update matrix world after rotation so geometry is in correct world space
-            surfaceMesh.updateMatrixWorld(true);
+            // Helpers & Labels
+            axisHelper = new THREE.AxesHelper(5); scene.add(axisHelper); createAxisLabels(); createRotationAxisLine();
 
-            // 6. Add to Scene
-            scene.add(surfaceMesh);
+            // Event Listeners (same)
+            addSegmentBtn.addEventListener('click', addSegmentUI); segmentsContainer.addEventListener('input', handleSegmentInputChange); segmentsContainer.addEventListener('click', handleRemoveSegmentClick); revolutionSlider.addEventListener('input', handleRevolutionSlider); axisRadios.forEach(radio => radio.addEventListener('change', handleAxisChange)); window.addEventListener('resize', resizeRenderer);
+
+            // Initial Setup
+            addSegmentUI(); const firstSegInputs = segmentsContainer.querySelector('.segment-input'); if (firstSegInputs) { firstSegInputs.querySelector('.p1x').value = 0.5; firstSegInputs.querySelector('.p1y').value = 1; firstSegInputs.querySelector('.p2x').value = 1.5; firstSegInputs.querySelector('.p2y').value = 2; firstSegInputs.querySelector('.p2z').value = 0.5; } updateVisualizationAndCalculations(); animate();
+        }
+
+        function resizeRenderer() { /* ... same ... */ const vizContainer = document.getElementById('visualization-container'); const width = vizContainer.clientWidth; const height = vizContainer.clientHeight; if (width === 0 || height === 0) return; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); }
+
+        // --- UI Management --- (Same)
+        function addSegmentUI() { const templateContent = segmentTemplate.content.cloneNode(true); segmentsContainer.appendChild(templateContent); updateVisualizationAndCalculations(); }
+        function handleSegmentInputChange(event) { if (event.target.classList.contains('coord')) { updateVisualizationAndCalculations(); } }
+        function handleRemoveSegmentClick(event) { if (event.target.classList.contains('removeSegmentBtn')) { event.target.closest('.segment-input').remove(); updateVisualizationAndCalculations(); } }
+        function handleRevolutionSlider(event) { revolutionAngle = parseFloat(event.target.value); angleValueSpan.textContent = revolutionAngle; clearSurfaceMeshes(); drawSurfaceOfRevolution_Manual_PerSegment(); if (centroidPathVisual) { centroidPathVisual.visible = (revolutionAngle === 360); } }
+        function handleAxisChange(event) { axisOfRotation = event.target.value; updateVisualizationAndCalculations(); }
+
+        // --- Data Parsing --- (Same)
+        function parseSegmentsFromUI() { /* ... same ... */ segmentsData = []; const segmentDivs = segmentsContainer.querySelectorAll('.segment-input'); segmentDivs.forEach(div => { const p1 = new THREE.Vector3( parseFloat(div.querySelector('.p1x').value) || 0, parseFloat(div.querySelector('.p1y').value) || 0, parseFloat(div.querySelector('.p1z').value) || 0 ); const p2 = new THREE.Vector3( parseFloat(div.querySelector('.p2x').value) || 0, parseFloat(div.querySelector('.p2y').value) || 0, parseFloat(div.querySelector('.p2z').value) || 0 ); if (p1.distanceTo(p2) > 1e-6) { const length = p1.distanceTo(p2); const centroid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5); segmentsData.push({ p1, p2, length, centroid }); } }); }
+
+        // --- Calculations --- (Same)
+        function calculatePolylineProperties() { /* ... same ... */ let totalLength = 0; let weightedCentroidSum = new THREE.Vector3(0, 0, 0); segmentsData.forEach(seg => { totalLength += seg.length; weightedCentroidSum.addScaledVector(seg.centroid, seg.length); }); const polylineCentroid = totalLength > 0 ? weightedCentroidSum.divideScalar(totalLength) : new THREE.Vector3(0, 0, 0); return { totalLength, polylineCentroid }; }
+        function getDistanceToAxis(point, axis) { /* ... same ... */ switch (axis) { case 'x': return Math.sqrt(point.y * point.y + point.z * point.z); case 'y': return Math.sqrt(point.x * point.x + point.z * point.z); case 'z': return Math.sqrt(point.x * point.x + point.y * point.y); default: return 0; } }
+        function calculatePappusValues(totalLength, polylineCentroid, axis) { /* ... same ... */ if (totalLength === 0) return { R: 0, d: 0, area: 0 }; const R = getDistanceToAxis(polylineCentroid, axis); const d = 2 * Math.PI * R; const area = totalLength * d; return { R, d, area }; }
+
+
+        // --- 3D Visualization ---
+
+        function clearSurfaceMeshes() {
+            surfaceMeshes.forEach(mesh => {
+                scene.remove(mesh);
+                if (mesh.geometry) mesh.geometry.dispose();
+                // Don't dispose the shared material here!
+            });
+            surfaceMeshes = [];
+        }
+
+        function clearCentroidPathVisual() { /* ... same ... */ if (centroidPathVisual) { scene.remove(centroidPathVisual); if (centroidPathVisual.geometry) centroidPathVisual.geometry.dispose(); if (centroidPathVisual.material) centroidPathVisual.material.dispose(); centroidPathVisual = null; } }
+
+        function clearSceneGeometry() { /* ... same ... */ segmentLines.forEach(line => { scene.remove(line); if(line.geometry) line.geometry.dispose(); if(line.material) line.material.dispose(); }); segmentLines = []; clearSurfaceMeshes(); if (rotationAxisLine) { scene.remove(rotationAxisLine); if(rotationAxisLine.geometry) rotationAxisLine.geometry.dispose(); if(rotationAxisLine.material) rotationAxisLine.material.dispose(); } rotationAxisLine = null; clearCentroidPathVisual(); }
+        function drawSegments() { /* ... same ... */ const material = new THREE.LineBasicMaterial({ color: SEGMENT_COLOR, linewidth: 2 }); segmentsData.forEach(seg => { const points = [seg.p1, seg.p2]; const geometry = new THREE.BufferGeometry().setFromPoints(points); const line = new THREE.Line(geometry, material); scene.add(line); segmentLines.push(line); }); }
+        function createRotationAxisLine() { /* ... same ... */ if (rotationAxisLine) scene.remove(rotationAxisLine); const material = new THREE.LineBasicMaterial({ color: AXIS_COLOR, linewidth: 2 }); let points = []; const length = 1000; switch (axisOfRotation) { case 'x': points = [new THREE.Vector3(-length, 0, 0), new THREE.Vector3(length, 0, 0)]; break; case 'y': points = [new THREE.Vector3(0, -length, 0), new THREE.Vector3(0, length, 0)]; break; case 'z': points = [new THREE.Vector3(0, 0, -length), new THREE.Vector3(0, 0, length)]; break; } const geometry = new THREE.BufferGeometry().setFromPoints(points); rotationAxisLine = new THREE.Line(geometry, material); rotationAxisLine.renderOrder = 1; scene.add(rotationAxisLine); }
+        function createAxisLabel(text, position, color) { /* ... same ... */ const canvas = document.createElement('canvas'); const context = canvas.getContext('2d'); const fontSize = 48; context.font = `Bold ${fontSize}px Arial`; const metrics = context.measureText(text); const textWidth = metrics.width; canvas.width = textWidth + 20; canvas.height = fontSize + 10; context.font = `Bold ${fontSize}px Arial`; context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, canvas.width / 2, canvas.height / 2); const texture = new THREE.CanvasTexture(canvas); texture.needsUpdate = true; const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); const sprite = new THREE.Sprite(material); const aspect = canvas.width / canvas.height; sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); sprite.position.copy(position); sprite.renderOrder = 2; scene.add(sprite); return sprite; }
+        function createAxisLabels() { /* ... same ... */ axisLabels.forEach(label => scene.remove(label)); axisLabels = []; axisLabels.push(createAxisLabel('X', new THREE.Vector3(AXIS_LABEL_OFFSET, 0, 0), '#FF0000')); axisLabels.push(createAxisLabel('Y', new THREE.Vector3(0, AXIS_LABEL_OFFSET, 0), '#00CC00')); axisLabels.push(createAxisLabel('Z', new THREE.Vector3(0, 0, AXIS_LABEL_OFFSET), '#0000FF')); }
+
+
+        // *** Use the SHARED MATERIAL when creating meshes ***
+        function drawSurfaceOfRevolution_Manual_PerSegment() {
+            clearSurfaceMeshes();
+            if (segmentsData.length === 0 || revolutionAngle <= 0 || !sharedSurfaceMaterial) return; // Check if material exists
+
+            const angleRad = THREE.MathUtils.degToRad(revolutionAngle);
+            const rotationAxis = AXIS_VECTORS[axisOfRotation];
+            const numSteps = Math.max(1, Math.ceil(RADIAL_SEGMENTS * (revolutionAngle / 360)));
+            const deltaAngle = angleRad / numSteps;
+            const q = new THREE.Quaternion();
+
+            segmentsData.forEach(seg => {
+                const geometry = new THREE.BufferGeometry();
+                const vertices = []; const indices = []; let indexOffset = 0;
+                const p1_base = seg.p1.clone(); const p2_base = seg.p2.clone();
+
+                for (let i = 0; i < numSteps; i++) {
+                    const currentAngle = i * deltaAngle; const nextAngle = (i + 1) * deltaAngle;
+                    const p1_curr = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle));
+                    const p2_curr = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle));
+                    const p1_next = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle));
+                    const p2_next = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle));
+                    vertices.push(p1_curr.x, p1_curr.y, p1_curr.z); vertices.push(p2_curr.x, p2_curr.y, p2_curr.z); vertices.push(p1_next.x, p1_next.y, p1_next.z); vertices.push(p2_next.x, p2_next.y, p2_next.z);
+                    indices.push(indexOffset + 0, indexOffset + 1, indexOffset + 2); indices.push(indexOffset + 1, indexOffset + 3, indexOffset + 2);
+                    indexOffset += 4;
+                }
+                if (vertices.length === 0) return;
+                geometry.setIndex(indices);
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                geometry.computeVertexNormals(); // Crucial for lighting
+
+                // *** Use the pre-defined sharedSurfaceMaterial ***
+                const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial);
+                scene.add(segmentSurfaceMesh);
+                surfaceMeshes.push(segmentSurfaceMesh);
+            });
         }
 
 
-        function drawCentroidPathVisual(centroid, axis) {
-            clearCentroidPathVisual();
-            if (!centroid) return;
-
-            const R = getDistanceToAxis(centroid, axis);
-            if (R < 1e-6) return; // Don't draw if centroid is on the axis
-
-            const torusRadius = R; // The radius of the circle traced by the centroid
-            const tubeRadius = CENTROID_PATH_RADIUS; // Thickness of the visual torus
-            const torusRadialSegments = 64; // More segments for smooth circle
-            const torusTubularSegments = 16; // Segments for the tube thickness
-
-            const geometry = new THREE.TorusGeometry(torusRadius, tubeRadius, torusTubularSegments, torusRadialSegments);
-            const material = new THREE.MeshBasicMaterial({ color: CENTROID_PATH_COLOR });
-            centroidPathVisual = new THREE.Mesh(geometry, material);
-
-            // Position and orient the torus visual correctly in world space
-            // The torus default orientation is in the XY plane (normal along Z).
-            switch (axis) {
-                case 'x': // Centroid rotates in the YZ plane, centered at (centroid.x, 0, 0)
-                    centroidPathVisual.position.set(centroid.x, 0, 0);
-                    centroidPathVisual.rotation.y = Math.PI / 2; // Rotate torus's normal from Z to Y
-                    break;
-                case 'y': // Centroid rotates in the XZ plane, centered at (0, centroid.y, 0)
-                    centroidPathVisual.position.set(0, centroid.y, 0);
-                    // No rotation needed (Torus default normal is Z, we need rotation in XZ plane which is correct)
-                     centroidPathVisual.rotation.x = Math.PI / 2; // Rotate torus normal from Z to X (Torus now lies flat in XZ plane)
-                    break;
-                case 'z': // Centroid rotates in the XY plane, centered at (0, 0, centroid.z)
-                    centroidPathVisual.position.set(0, 0, centroid.z);
-                     centroidPathVisual.rotation.x = Math.PI / 2; // Rotate torus's normal from Z to X
-                     centroidPathVisual.rotation.y = Math.PI / 2; // Then rotate from X to Y ? No this is wrong.
-                     // Torus is in XY plane by default (normal Z). This is correct. No rotation needed.
-                     // Correction: Default Torus Geometry lies in the XY plane (normal is Z). This is correct for rotation around Z axis.
-                    break;
-            }
-            centroidPathVisual.updateMatrixWorld(true); // Apply transforms
-            centroidPathVisual.visible = (revolutionAngle === 360); // Only show when slider is at 360
-            scene.add(centroidPathVisual);
-        }
+        // Centroid Path Visual (LineLoop - same as previous)
+        function drawCentroidPathVisual(centroid, axis) { /* ... same ... */ clearCentroidPathVisual(); if (!centroid) return; const R = getDistanceToAxis(centroid, axis); if (R < 1e-6) return; const points = []; const center = new THREE.Vector3(); let uAxis = new THREE.Vector3(); let vAxis = new THREE.Vector3(); switch (axis) { case 'x': center.set(centroid.x, 0, 0); uAxis.set(0, 1, 0); vAxis.set(0, 0, 1); break; case 'y': center.set(0, centroid.y, 0); uAxis.set(1, 0, 0); vAxis.set(0, 0, 1); break; case 'z': center.set(0, 0, centroid.z); uAxis.set(1, 0, 0); vAxis.set(0, 1, 0); break; } for (let i = 0; i <= CENTROID_PATH_SEGMENTS; i++) { const angle = (i / CENTROID_PATH_SEGMENTS) * Math.PI * 2; const point = new THREE.Vector3(); point.addScaledVector(uAxis, Math.cos(angle) * R); point.addScaledVector(vAxis, Math.sin(angle) * R); point.add(center); points.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(points); const material = new THREE.LineBasicMaterial({ color: CENTROID_PATH_COLOR, linewidth: 2 }); centroidPathVisual = new THREE.LineLoop(geometry, material); centroidPathVisual.renderOrder = 1; centroidPathVisual.visible = (revolutionAngle === 360); scene.add(centroidPathVisual); }
 
 
-        // --- Update Cycle ---
-        function updateVisualizationAndCalculations() {
-            // 1. Read data from UI
-            parseSegmentsFromUI();
+        // --- Update Cycle --- (Same)
+        function updateVisualizationAndCalculations() { parseSegmentsFromUI(); const polylineProps = calculatePolylineProperties(); const pappusValues = calculatePappusValues(polylineProps.totalLength, polylineProps.polylineCentroid, axisOfRotation); totalLengthSpan.textContent = polylineProps.totalLength.toFixed(3); if (polylineProps.totalLength > 0) { centroidCoordsSpan.textContent = `(${polylineProps.polylineCentroid.x.toFixed(2)}, ${polylineProps.polylineCentroid.y.toFixed(2)}, ${polylineProps.polylineCentroid.z.toFixed(2)})`; centroidDistanceRSpan.textContent = pappusValues.R.toFixed(3); centroidDistanceDSpan.textContent = pappusValues.d.toFixed(3); surfaceAreaSpan.textContent = pappusValues.area.toFixed(3); } else { centroidCoordsSpan.textContent = "N/A"; centroidDistanceRSpan.textContent = "0.000"; centroidDistanceDSpan.textContent = "0.000"; surfaceAreaSpan.textContent = "0.000"; } clearSceneGeometry(); createRotationAxisLine(); drawSegments(); drawSurfaceOfRevolution_Manual_PerSegment(); if (polylineProps.totalLength > 0) { drawCentroidPathVisual(polylineProps.polylineCentroid, axisOfRotation); } }
 
-            // 2. Perform Calculations
-            const polylineProps = calculatePolylineProperties();
-            // Calculations are always for the full 360-degree revolution
-            const pappusValues = calculatePappusValues(polylineProps.totalLength, polylineProps.polylineCentroid, axisOfRotation);
+        // --- Animation Loop --- (Same)
+        function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
 
-            // 3. Update Calculation Display (Always based on full revolution)
-            totalLengthSpan.textContent = polylineProps.totalLength.toFixed(3); // Increased precision
-            if (polylineProps.totalLength > 0) {
-                centroidCoordsSpan.textContent = `(${polylineProps.polylineCentroid.x.toFixed(2)}, ${polylineProps.polylineCentroid.y.toFixed(2)}, ${polylineProps.polylineCentroid.z.toFixed(2)})`;
-                centroidDistanceRSpan.textContent = pappusValues.R.toFixed(3);
-                centroidDistanceDSpan.textContent = pappusValues.d.toFixed(3);
-                surfaceAreaSpan.textContent = pappusValues.area.toFixed(3);
-            } else {
-                centroidCoordsSpan.textContent = "N/A";
-                centroidDistanceRSpan.textContent = "0.000";
-                centroidDistanceDSpan.textContent = "0.000";
-                surfaceAreaSpan.textContent = "0.000";
-            }
+        // --- Run --- (Same)
+        init();
 
-
-            // 4. Update 3D Scene
-            clearSceneGeometry();           // Clear old dynamic visuals
-            createRotationAxisLine();       // Draw highlighted axis based on selection
-            drawSegments();                 // Draw current segments
-            drawSurfaceOfRevolution();      // Draw surface based on current angle slider & axis
-            if (polylineProps.totalLength > 0) {
-                 // Draw centroid path (only visible at 360 deg)
-                drawCentroidPathVisual(polylineProps.polylineCentroid, axisOfRotation);
-            }
-        }
-
-        // --- Animation Loop ---
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update(); // Required if enableDamping is true
-            renderer.render(scene, camera);
-        }
-
-        // --- Run ---
-        init(); // Start the application
     </script>
 
 </body>
