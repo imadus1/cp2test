@@ -3,42 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pappus's Theorem - Realistic Surfaces</title>
+    <title>Pappus's Theorem - Top Bar Layout</title>
 
     <style>
-        /* CSS styles remain the same as the previous version */
-        body { font-family: sans-serif; margin: 0; overflow: hidden; background-color: #f0f0f0; display: flex; }
-        #container { display: flex; width: 100vw; height: 100vh; }
-        #ui-controls { width: 380px; padding: 15px; background-color: #e9e9e9; overflow-y: auto; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; border-right: 1px solid #ccc; }
-        #visualization-container { flex-grow: 1; height: 100vh; position: relative; }
-        #visualizationCanvas { display: block; width: 100%; height: 100%; }
-        h1, h2 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 5px; color: #333; }
-        h1 { font-size: 1.4em; } h2 { font-size: 1.1em; }
-        #segments-section, #settings-section, #calculations-section, #instructions { margin-bottom: 15px; padding: 12px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        button { padding: 8px 15px; margin-bottom: 10px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; }
+        /* Base styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevent body scroll */
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column; /* Stack UI controls on top of visualization */
+            width: 100vw;
+            height: 100vh; /* Ensure container takes full viewport height */
+        }
+
+        #ui-controls {
+            width: 100%;
+            max-height: 40vh; /* Limit height of the top bar */
+            min-height: 150px; /* Ensure a minimum usable height */
+            padding: 10px;
+            background-color: #e9e9e9;
+            overflow-y: auto; /* Allow scrolling within the bar if content exceeds max-height */
+            box-sizing: border-box;
+            border-bottom: 2px solid #ccc; /* Separator */
+            display: flex; /* Arrange internal sections */
+            flex-wrap: wrap; /* Allow sections to wrap */
+            justify-content: space-around; /* Distribute space */
+            align-items: flex-start; /* Align items to the top */
+            gap: 10px; /* Add spacing between wrapped items */
+        }
+
+        #visualization-container {
+            flex-grow: 1; /* Take remaining vertical space */
+            position: relative; /* Keep for canvas positioning if needed */
+            min-height: 200px; /* Ensure viz area doesn't collapse completely */
+            background-color: #cccccc; /* Background for the viz area */
+        }
+
+        #visualizationCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Headings & Sections within UI controls */
+        #ui-controls h1, #ui-controls h2 {
+            margin-top: 0;
+            margin-bottom: 8px; /* Reduced margin */
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+            color: #333;
+            width: 100%; /* Make headings span full width of their container initially */
+            text-align: center; /* Center top heading */
+            font-size: 1.2em;
+        }
+         #ui-controls h2 {
+            font-size: 1.0em;
+            text-align: left; /* Keep section headings left-aligned */
+            margin-top: 5px;
+         }
+        #ui-controls > p { /* Pappus description */
+            width: 100%;
+            text-align: center;
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+        }
+
+        #segments-section,
+        #settings-section,
+        #calculations-section,
+        #instructions {
+            margin-bottom: 0; /* Remove bottom margin as gap handles spacing */
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            /* Flex properties for sections */
+            flex: 1 1 280px; /* Allow growing, shrinking, with a base width */
+            min-width: 250px; /* Prevent sections from becoming too narrow */
+        }
+         #instructions {
+             flex-basis: 100%; /* Make instructions span full width if wrapping */
+             background-color: #f0f8ff; border-color: #cce5ff;
+         }
+
+
+        /* Buttons */
+        button { padding: 6px 12px; margin-bottom: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; font-size: 0.9em; }
         button:hover { background-color: #0056b3; }
-        .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 4px 8px; font-size: 0.8em; }
+        .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 3px 6px; font-size: 0.75em; }
         .removeSegmentBtn:hover { background-color: #c82333; }
-        label { margin-right: 5px; display: inline-block; margin-bottom: 5px; }
-        input[type="number"] { width: 60px; padding: 5px 4px; margin: 2px 3px 2px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; }
-        input[type="range"] { width: 180px; vertical-align: middle; }
-        #angleValue { display: inline-block; width: 35px; text-align: right; font-weight: bold; margin-left: 5px; }
-        #calculations-section div { margin-bottom: 6px; font-size: 0.95em; line-height: 1.4; }
-        #calculations-section span { font-weight: bold; color: #0056b3; background-color: #eef; padding: 1px 4px; border-radius: 3px; display: inline-block; min-width: 40px; text-align: right; }
-        #centroidCoords { min-width: 150px; text-align: left; }
-        .segment-input { margin-bottom: 15px; padding: 10px; border: 1px dashed #ccc; border-radius: 3px; background-color: #fdfdfd; }
-        .point-input-group { display: flex; align-items: center; margin-bottom: 5px; }
-        .point-input-group > span { font-weight: bold; margin-right: 8px; min-width: 25px; text-align: right; }
+
+        /* Labels and Inputs */
+        label { margin-right: 5px; display: inline-block; margin-bottom: 4px; font-size: 0.9em;}
+        input[type="number"] { width: 55px; padding: 4px 3px; margin: 1px 2px 1px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; font-size: 0.9em; }
+        input[type="range"] { width: 150px; vertical-align: middle; }
+        #angleValue { display: inline-block; width: 30px; text-align: right; font-weight: bold; margin-left: 4px; font-size: 0.9em;}
+
+        /* Calculations */
+        #calculations-section div { margin-bottom: 4px; font-size: 0.9em; line-height: 1.3; }
+        #calculations-section span { font-weight: bold; color: #0056b3; background-color: #eef; padding: 1px 3px; border-radius: 3px; display: inline-block; min-width: 35px; text-align: right; }
+        #centroidCoords { min-width: 140px; text-align: left; }
+
+        /* Segment Input Area */
+        .segment-input { margin-bottom: 10px; padding: 8px; border: 1px dashed #ccc; border-radius: 3px; background-color: #fdfdfd; }
+        .point-input-group { display: flex; align-items: center; margin-bottom: 4px; }
+        .point-input-group > span { font-weight: bold; margin-right: 5px; min-width: 25px; text-align: right; font-size: 0.9em; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
-        hr { border: none; border-top: 1px solid #eee; margin: 15px 0; }
-        #instructions { background-color: #f0f8ff; border-color: #cce5ff; }
-        #instructions ul { padding-left: 20px; margin-top: 5px; margin-bottom: 5px; font-size: 0.9em; color: #333; }
-        #instructions li { margin-bottom: 5px; }
+
+        /* Instructions */
+        #instructions ul { padding-left: 18px; margin-top: 4px; margin-bottom: 4px; font-size: 0.85em; color: #333; }
+        #instructions li { margin-bottom: 4px; }
         #instructions strong { color: #004085; }
-        #settings-section > div { margin-bottom: 10px; }
-        #settings-section > div > label:first-child { font-weight: bold; margin-right: 10px; min-width: 120px; display: inline-block; }
-        #settings-section > div > label > input[type="radio"] { margin-right: 3px; vertical-align: middle; }
-        #settings-section label[for="revolutionSlider"] { font-weight: bold; min-width: 120px; display: inline-block; }
+
+        /* Settings Layout */
+        #settings-section > div { margin-bottom: 8px; }
+        #settings-section > div > label:first-child { font-weight: bold; margin-right: 8px; min-width: 100px; display: inline-block; }
+        #settings-section > div > label > input[type="radio"] { margin-right: 2px; vertical-align: middle; }
+        #settings-section label[for="revolutionSlider"] { font-weight: bold; min-width: 100px; display: inline-block; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 700px) {
+             #ui-controls {
+                 max-height: 50vh; /* Allow slightly more height on smaller screens */
+                 justify-content: flex-start; /* Align items to start */
+             }
+             #segments-section,
+             #settings-section,
+             #calculations-section {
+                 flex-basis: 95%; /* Make sections take almost full width */
+                 min-width: unset; /* Remove min-width */
+             }
+             #ui-controls h1 { font-size: 1.1em;}
+             #ui-controls h2 { font-size: 0.95em;}
+        }
+         @media (max-width: 400px) {
+             #ui-controls {
+                 padding: 5px;
+                 gap: 5px;
+             }
+             #segments-section,
+             #settings-section,
+             #calculations-section,
+             #instructions {
+                 padding: 8px;
+             }
+             input[type="number"] { width: 50px; }
+             input[type="range"] { width: 120px; }
+             button { padding: 5px 10px; font-size: 0.85em;}
+             .removeSegmentBtn { padding: 2px 5px; font-size: 0.7em; }
+         }
+
     </style>
 
     <script type="importmap">
@@ -51,9 +172,10 @@
     </script>
 </head>
 <body>
+    <!-- HTML structure remains the same internally, just CSS changes layout -->
     <div id="container">
          <div id="ui-controls">
-            <!-- UI sections -->
+            <!-- Order matters less now due to flex-wrap -->
             <h1>Pappus's Theorem II</h1>
             <p>Surface Area = Total Length (L) × Centroid Path Distance (d)</p>
             <div id="segments-section"><h2>Segments</h2><button id="addSegmentBtn">Add Segment</button><div id="segmentsContainer"></div></div>
@@ -87,93 +209,58 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // --- Global Variables --- (Same)
+        // --- Global Variables, Constants, DOM Elements --- (Remain the same)
         let scene, camera, renderer, controls;
         let segmentsData = []; let segmentLines = []; let surfaceMeshes = [];
         let axisOfRotation = 'y'; let revolutionAngle = 360;
         let axisHelper, rotationAxisLine, centroidPathVisual; let axisLabels = [];
-        let sharedSurfaceMaterial; // *** Variable to hold the shared material ***
-
-        // --- Constants --- (Same)
+        let sharedSurfaceMaterial;
         const SEGMENT_COLOR = 0x0000ff; const SURFACE_COLOR = 0xffa500; const AXIS_COLOR = 0xff0000; const CENTROID_PATH_COLOR = 0x00ff00;
         const RADIAL_SEGMENTS = 32; const CENTROID_PATH_SEGMENTS = 64;
         const AXIS_LABEL_OFFSET = 6.0; const AXIS_LABEL_SIZE = 1.5;
-
-        // --- DOM Elements --- (Same)
         const segmentsContainer = document.getElementById('segmentsContainer'); const addSegmentBtn = document.getElementById('addSegmentBtn'); const segmentTemplate = document.getElementById('segmentTemplate'); const revolutionSlider = document.getElementById('revolutionSlider'); const angleValueSpan = document.getElementById('angleValue'); const axisRadios = document.querySelectorAll('input[name="axis"]'); const totalLengthSpan = document.getElementById('totalLength'); const centroidCoordsSpan = document.getElementById('centroidCoords'); const centroidDistanceRSpan = document.getElementById('centroidDistanceR'); const centroidDistanceDSpan = document.getElementById('centroidDistanceD'); const surfaceAreaSpan = document.getElementById('surfaceArea');
-
-        // --- Rotation Axis Vectors --- (Same)
         const AXIS_VECTORS = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 
-        // --- Initialization ---
-        function init() {
-            // Scene, Camera, Renderer, Lights, Controls setup (same basic setup)
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xcccccc); // Slightly darker background might show reflections better
 
+        // --- Initialization --- (Same, including env map loading and material creation)
+        function init() {
+            scene = new THREE.Scene(); scene.background = new THREE.Color(0xcccccc);
             const vizContainer = document.getElementById('visualization-container');
             camera = new THREE.PerspectiveCamera(60, vizContainer.clientWidth / vizContainer.clientHeight, 0.1, 1000);
             camera.position.set(6, 6, 12); camera.lookAt(0, 0, 0);
             const canvas = document.getElementById('visualizationCanvas');
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.toneMapping = THREE.ACESFilmicToneMapping; // Use tone mapping for better HDR handling if using HDR env maps
-            renderer.toneMappingExposure = 1.0;
-            resizeRenderer();
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Lower ambient if env map provides light
-            scene.add(ambientLight);
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8); // Keep directional lights for highlights
-            directionalLight1.position.set(5, 10, 7.5); scene.add(directionalLight1);
-            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-            directionalLight2.position.set(-5, -5, -5); scene.add(directionalLight2);
+            renderer.setPixelRatio(window.devicePixelRatio); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0; resizeRenderer();
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); scene.add(ambientLight);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8); directionalLight1.position.set(5, 10, 7.5); scene.add(directionalLight1);
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4); directionalLight2.position.set(-5, -5, -5); scene.add(directionalLight2);
             controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.05; controls.minDistance = 1; controls.maxDistance = 100; controls.maxPolarAngle = Math.PI;
 
-            // *** Load Environment Map ***
             const loader = new THREE.CubeTextureLoader();
-            // !!! REPLACE THESE PATHS with your actual cube map image paths !!!
-            // Example using generic placeholders. Get images from Poly Haven (e.g., 'dikhololo_night_1k') or other sources.
-            // Order: +X (px), -X (nx), +Y (py), -Y (ny), +Z (pz), -Z (nz)
-            const textureCube = loader.setPath('./textures/cube/bridge2/').load( [ // Assumes a 'textures/cube/bridge2/' folder exists relative to the HTML
-                'posx.jpg', 'negx.jpg',
-                'posy.jpg', 'negy.jpg',
-                'posz.jpg', 'negz.jpg'
-            ], () => {
-                console.log("Environment map loaded.");
-                // Optional: Re-render once after texture loads if needed, though scene.environment update handles it.
-                // updateVisualizationAndCalculations();
-            }, undefined, (error) => {
-                 console.error("Error loading environment map:", error);
-                 // Provide fallback or notification
-                 alert("Could not load environment map textures. Reflections may not appear correctly. Check texture paths and ensure images exist.");
-            });
-            scene.environment = textureCube; // Set scene environment for PBR lighting/reflections
+            // !!! REMEMBER TO PROVIDE YOUR CUBE MAP TEXTURES !!!
+            const textureCube = loader.setPath('./textures/cube/bridge2/').load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ], () => { console.log("Environment map loaded."); }, undefined, (error) => { console.error("Error loading environment map:", error); alert("Could not load environment map textures."); });
+            scene.environment = textureCube;
 
+            sharedSurfaceMaterial = new THREE.MeshStandardMaterial({ color: SURFACE_COLOR, transparent: true, opacity: 0.65, side: THREE.DoubleSide, metalness: 0.2, roughness: 0.3, envMapIntensity: 1.0, refractionRatio: 0.95, });
 
-            // *** Create Shared Surface Material ***
-            sharedSurfaceMaterial = new THREE.MeshStandardMaterial({
-                color: SURFACE_COLOR,
-                transparent: true,
-                opacity: 0.65,         // Adjust opacity (0.0 to 1.0)
-                side: THREE.DoubleSide,
-                metalness: 0.2,         // Low metalness for non-metal look (0.0 to 1.0)
-                roughness: 0.3,         // Lower roughness for sharper reflections (0.0 to 1.0)
-                envMapIntensity: 1.0,   // Intensity of environment map reflection
-                refractionRatio: 0.95, // Simulate slight light bending (0.0 to 1.0) - subtle effect
-                // depthWrite: false // Sometimes needed for complex transparency sorting, test if issues arise
-            });
-
-
-            // Helpers & Labels
             axisHelper = new THREE.AxesHelper(5); scene.add(axisHelper); createAxisLabels(); createRotationAxisLine();
-
-            // Event Listeners (same)
             addSegmentBtn.addEventListener('click', addSegmentUI); segmentsContainer.addEventListener('input', handleSegmentInputChange); segmentsContainer.addEventListener('click', handleRemoveSegmentClick); revolutionSlider.addEventListener('input', handleRevolutionSlider); axisRadios.forEach(radio => radio.addEventListener('change', handleAxisChange)); window.addEventListener('resize', resizeRenderer);
-
-            // Initial Setup
             addSegmentUI(); const firstSegInputs = segmentsContainer.querySelector('.segment-input'); if (firstSegInputs) { firstSegInputs.querySelector('.p1x').value = 0.5; firstSegInputs.querySelector('.p1y').value = 1; firstSegInputs.querySelector('.p2x').value = 1.5; firstSegInputs.querySelector('.p2y').value = 2; firstSegInputs.querySelector('.p2z').value = 0.5; } updateVisualizationAndCalculations(); animate();
         }
 
-        function resizeRenderer() { /* ... same ... */ const vizContainer = document.getElementById('visualization-container'); const width = vizContainer.clientWidth; const height = vizContainer.clientHeight; if (width === 0 || height === 0) return; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); }
+        // --- resizeRenderer --- (Crucial - needs to handle the new layout)
+        function resizeRenderer() {
+            const vizContainer = document.getElementById('visualization-container');
+            // Get dimensions of the container *below* the UI bar
+            const width = vizContainer.clientWidth;
+            const height = vizContainer.clientHeight;
+
+            if (width === 0 || height === 0) return; // Avoid issues if hidden
+
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        }
 
         // --- UI Management --- (Same)
         function addSegmentUI() { const templateContent = segmentTemplate.content.cloneNode(true); segmentsContainer.appendChild(templateContent); updateVisualizationAndCalculations(); }
@@ -183,75 +270,24 @@
         function handleAxisChange(event) { axisOfRotation = event.target.value; updateVisualizationAndCalculations(); }
 
         // --- Data Parsing --- (Same)
-        function parseSegmentsFromUI() { /* ... same ... */ segmentsData = []; const segmentDivs = segmentsContainer.querySelectorAll('.segment-input'); segmentDivs.forEach(div => { const p1 = new THREE.Vector3( parseFloat(div.querySelector('.p1x').value) || 0, parseFloat(div.querySelector('.p1y').value) || 0, parseFloat(div.querySelector('.p1z').value) || 0 ); const p2 = new THREE.Vector3( parseFloat(div.querySelector('.p2x').value) || 0, parseFloat(div.querySelector('.p2y').value) || 0, parseFloat(div.querySelector('.p2z').value) || 0 ); if (p1.distanceTo(p2) > 1e-6) { const length = p1.distanceTo(p2); const centroid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5); segmentsData.push({ p1, p2, length, centroid }); } }); }
+        function parseSegmentsFromUI() { segmentsData = []; const segmentDivs = segmentsContainer.querySelectorAll('.segment-input'); segmentDivs.forEach(div => { const p1 = new THREE.Vector3( parseFloat(div.querySelector('.p1x').value) || 0, parseFloat(div.querySelector('.p1y').value) || 0, parseFloat(div.querySelector('.p1z').value) || 0 ); const p2 = new THREE.Vector3( parseFloat(div.querySelector('.p2x').value) || 0, parseFloat(div.querySelector('.p2y').value) || 0, parseFloat(div.querySelector('.p2z').value) || 0 ); if (p1.distanceTo(p2) > 1e-6) { const length = p1.distanceTo(p2); const centroid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5); segmentsData.push({ p1, p2, length, centroid }); } }); }
 
         // --- Calculations --- (Same)
-        function calculatePolylineProperties() { /* ... same ... */ let totalLength = 0; let weightedCentroidSum = new THREE.Vector3(0, 0, 0); segmentsData.forEach(seg => { totalLength += seg.length; weightedCentroidSum.addScaledVector(seg.centroid, seg.length); }); const polylineCentroid = totalLength > 0 ? weightedCentroidSum.divideScalar(totalLength) : new THREE.Vector3(0, 0, 0); return { totalLength, polylineCentroid }; }
-        function getDistanceToAxis(point, axis) { /* ... same ... */ switch (axis) { case 'x': return Math.sqrt(point.y * point.y + point.z * point.z); case 'y': return Math.sqrt(point.x * point.x + point.z * point.z); case 'z': return Math.sqrt(point.x * point.x + point.y * point.y); default: return 0; } }
-        function calculatePappusValues(totalLength, polylineCentroid, axis) { /* ... same ... */ if (totalLength === 0) return { R: 0, d: 0, area: 0 }; const R = getDistanceToAxis(polylineCentroid, axis); const d = 2 * Math.PI * R; const area = totalLength * d; return { R, d, area }; }
+        function calculatePolylineProperties() { let totalLength = 0; let weightedCentroidSum = new THREE.Vector3(0, 0, 0); segmentsData.forEach(seg => { totalLength += seg.length; weightedCentroidSum.addScaledVector(seg.centroid, seg.length); }); const polylineCentroid = totalLength > 0 ? weightedCentroidSum.divideScalar(totalLength) : new THREE.Vector3(0, 0, 0); return { totalLength, polylineCentroid }; }
+        function getDistanceToAxis(point, axis) { switch (axis) { case 'x': return Math.sqrt(point.y * point.y + point.z * point.z); case 'y': return Math.sqrt(point.x * point.x + point.z * point.z); case 'z': return Math.sqrt(point.x * point.x + point.y * point.y); default: return 0; } }
+        function calculatePappusValues(totalLength, polylineCentroid, axis) { if (totalLength === 0) return { R: 0, d: 0, area: 0 }; const R = getDistanceToAxis(polylineCentroid, axis); const d = 2 * Math.PI * R; const area = totalLength * d; return { R, d, area }; }
 
 
-        // --- 3D Visualization ---
-
-        function clearSurfaceMeshes() {
-            surfaceMeshes.forEach(mesh => {
-                scene.remove(mesh);
-                if (mesh.geometry) mesh.geometry.dispose();
-                // Don't dispose the shared material here!
-            });
-            surfaceMeshes = [];
-        }
-
-        function clearCentroidPathVisual() { /* ... same ... */ if (centroidPathVisual) { scene.remove(centroidPathVisual); if (centroidPathVisual.geometry) centroidPathVisual.geometry.dispose(); if (centroidPathVisual.material) centroidPathVisual.material.dispose(); centroidPathVisual = null; } }
-
-        function clearSceneGeometry() { /* ... same ... */ segmentLines.forEach(line => { scene.remove(line); if(line.geometry) line.geometry.dispose(); if(line.material) line.material.dispose(); }); segmentLines = []; clearSurfaceMeshes(); if (rotationAxisLine) { scene.remove(rotationAxisLine); if(rotationAxisLine.geometry) rotationAxisLine.geometry.dispose(); if(rotationAxisLine.material) rotationAxisLine.material.dispose(); } rotationAxisLine = null; clearCentroidPathVisual(); }
-        function drawSegments() { /* ... same ... */ const material = new THREE.LineBasicMaterial({ color: SEGMENT_COLOR, linewidth: 2 }); segmentsData.forEach(seg => { const points = [seg.p1, seg.p2]; const geometry = new THREE.BufferGeometry().setFromPoints(points); const line = new THREE.Line(geometry, material); scene.add(line); segmentLines.push(line); }); }
-        function createRotationAxisLine() { /* ... same ... */ if (rotationAxisLine) scene.remove(rotationAxisLine); const material = new THREE.LineBasicMaterial({ color: AXIS_COLOR, linewidth: 2 }); let points = []; const length = 1000; switch (axisOfRotation) { case 'x': points = [new THREE.Vector3(-length, 0, 0), new THREE.Vector3(length, 0, 0)]; break; case 'y': points = [new THREE.Vector3(0, -length, 0), new THREE.Vector3(0, length, 0)]; break; case 'z': points = [new THREE.Vector3(0, 0, -length), new THREE.Vector3(0, 0, length)]; break; } const geometry = new THREE.BufferGeometry().setFromPoints(points); rotationAxisLine = new THREE.Line(geometry, material); rotationAxisLine.renderOrder = 1; scene.add(rotationAxisLine); }
-        function createAxisLabel(text, position, color) { /* ... same ... */ const canvas = document.createElement('canvas'); const context = canvas.getContext('2d'); const fontSize = 48; context.font = `Bold ${fontSize}px Arial`; const metrics = context.measureText(text); const textWidth = metrics.width; canvas.width = textWidth + 20; canvas.height = fontSize + 10; context.font = `Bold ${fontSize}px Arial`; context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, canvas.width / 2, canvas.height / 2); const texture = new THREE.CanvasTexture(canvas); texture.needsUpdate = true; const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); const sprite = new THREE.Sprite(material); const aspect = canvas.width / canvas.height; sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); sprite.position.copy(position); sprite.renderOrder = 2; scene.add(sprite); return sprite; }
-        function createAxisLabels() { /* ... same ... */ axisLabels.forEach(label => scene.remove(label)); axisLabels = []; axisLabels.push(createAxisLabel('X', new THREE.Vector3(AXIS_LABEL_OFFSET, 0, 0), '#FF0000')); axisLabels.push(createAxisLabel('Y', new THREE.Vector3(0, AXIS_LABEL_OFFSET, 0), '#00CC00')); axisLabels.push(createAxisLabel('Z', new THREE.Vector3(0, 0, AXIS_LABEL_OFFSET), '#0000FF')); }
-
-
-        // *** Use the SHARED MATERIAL when creating meshes ***
-        function drawSurfaceOfRevolution_Manual_PerSegment() {
-            clearSurfaceMeshes();
-            if (segmentsData.length === 0 || revolutionAngle <= 0 || !sharedSurfaceMaterial) return; // Check if material exists
-
-            const angleRad = THREE.MathUtils.degToRad(revolutionAngle);
-            const rotationAxis = AXIS_VECTORS[axisOfRotation];
-            const numSteps = Math.max(1, Math.ceil(RADIAL_SEGMENTS * (revolutionAngle / 360)));
-            const deltaAngle = angleRad / numSteps;
-            const q = new THREE.Quaternion();
-
-            segmentsData.forEach(seg => {
-                const geometry = new THREE.BufferGeometry();
-                const vertices = []; const indices = []; let indexOffset = 0;
-                const p1_base = seg.p1.clone(); const p2_base = seg.p2.clone();
-
-                for (let i = 0; i < numSteps; i++) {
-                    const currentAngle = i * deltaAngle; const nextAngle = (i + 1) * deltaAngle;
-                    const p1_curr = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle));
-                    const p2_curr = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle));
-                    const p1_next = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle));
-                    const p2_next = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle));
-                    vertices.push(p1_curr.x, p1_curr.y, p1_curr.z); vertices.push(p2_curr.x, p2_curr.y, p2_curr.z); vertices.push(p1_next.x, p1_next.y, p1_next.z); vertices.push(p2_next.x, p2_next.y, p2_next.z);
-                    indices.push(indexOffset + 0, indexOffset + 1, indexOffset + 2); indices.push(indexOffset + 1, indexOffset + 3, indexOffset + 2);
-                    indexOffset += 4;
-                }
-                if (vertices.length === 0) return;
-                geometry.setIndex(indices);
-                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-                geometry.computeVertexNormals(); // Crucial for lighting
-
-                // *** Use the pre-defined sharedSurfaceMaterial ***
-                const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial);
-                scene.add(segmentSurfaceMesh);
-                surfaceMeshes.push(segmentSurfaceMesh);
-            });
-        }
-
-
-        // Centroid Path Visual (LineLoop - same as previous)
-        function drawCentroidPathVisual(centroid, axis) { /* ... same ... */ clearCentroidPathVisual(); if (!centroid) return; const R = getDistanceToAxis(centroid, axis); if (R < 1e-6) return; const points = []; const center = new THREE.Vector3(); let uAxis = new THREE.Vector3(); let vAxis = new THREE.Vector3(); switch (axis) { case 'x': center.set(centroid.x, 0, 0); uAxis.set(0, 1, 0); vAxis.set(0, 0, 1); break; case 'y': center.set(0, centroid.y, 0); uAxis.set(1, 0, 0); vAxis.set(0, 0, 1); break; case 'z': center.set(0, 0, centroid.z); uAxis.set(1, 0, 0); vAxis.set(0, 1, 0); break; } for (let i = 0; i <= CENTROID_PATH_SEGMENTS; i++) { const angle = (i / CENTROID_PATH_SEGMENTS) * Math.PI * 2; const point = new THREE.Vector3(); point.addScaledVector(uAxis, Math.cos(angle) * R); point.addScaledVector(vAxis, Math.sin(angle) * R); point.add(center); points.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(points); const material = new THREE.LineBasicMaterial({ color: CENTROID_PATH_COLOR, linewidth: 2 }); centroidPathVisual = new THREE.LineLoop(geometry, material); centroidPathVisual.renderOrder = 1; centroidPathVisual.visible = (revolutionAngle === 360); scene.add(centroidPathVisual); }
+        // --- 3D Visualization --- (Clear/Draw functions remain largely the same logic)
+        function clearSurfaceMeshes() { surfaceMeshes.forEach(mesh => { scene.remove(mesh); if (mesh.geometry) mesh.geometry.dispose(); }); surfaceMeshes = []; }
+        function clearCentroidPathVisual() { if (centroidPathVisual) { scene.remove(centroidPathVisual); if (centroidPathVisual.geometry) centroidPathVisual.geometry.dispose(); if (centroidPathVisual.material) centroidPathVisual.material.dispose(); centroidPathVisual = null; } }
+        function clearSceneGeometry() { segmentLines.forEach(line => { scene.remove(line); if(line.geometry) line.geometry.dispose(); if(line.material) line.material.dispose(); }); segmentLines = []; clearSurfaceMeshes(); if (rotationAxisLine) { scene.remove(rotationAxisLine); if(rotationAxisLine.geometry) rotationAxisLine.geometry.dispose(); if(rotationAxisLine.material) rotationAxisLine.material.dispose(); } rotationAxisLine = null; clearCentroidPathVisual(); }
+        function drawSegments() { const material = new THREE.LineBasicMaterial({ color: SEGMENT_COLOR, linewidth: 2 }); segmentsData.forEach(seg => { const points = [seg.p1, seg.p2]; const geometry = new THREE.BufferGeometry().setFromPoints(points); const line = new THREE.Line(geometry, material); scene.add(line); segmentLines.push(line); }); }
+        function createRotationAxisLine() { if (rotationAxisLine) scene.remove(rotationAxisLine); const material = new THREE.LineBasicMaterial({ color: AXIS_COLOR, linewidth: 2 }); let points = []; const length = 1000; switch (axisOfRotation) { case 'x': points = [new THREE.Vector3(-length, 0, 0), new THREE.Vector3(length, 0, 0)]; break; case 'y': points = [new THREE.Vector3(0, -length, 0), new THREE.Vector3(0, length, 0)]; break; case 'z': points = [new THREE.Vector3(0, 0, -length), new THREE.Vector3(0, 0, length)]; break; } const geometry = new THREE.BufferGeometry().setFromPoints(points); rotationAxisLine = new THREE.Line(geometry, material); rotationAxisLine.renderOrder = 1; scene.add(rotationAxisLine); }
+        function createAxisLabel(text, position, color) { const canvas = document.createElement('canvas'); const context = canvas.getContext('2d'); const fontSize = 48; context.font = `Bold ${fontSize}px Arial`; const metrics = context.measureText(text); const textWidth = metrics.width; canvas.width = textWidth + 20; canvas.height = fontSize + 10; context.font = `Bold ${fontSize}px Arial`; context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, canvas.width / 2, canvas.height / 2); const texture = new THREE.CanvasTexture(canvas); texture.needsUpdate = true; const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); const sprite = new THREE.Sprite(material); const aspect = canvas.width / canvas.height; sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); sprite.position.copy(position); sprite.renderOrder = 2; scene.add(sprite); return sprite; }
+        function createAxisLabels() { axisLabels.forEach(label => scene.remove(label)); axisLabels = []; axisLabels.push(createAxisLabel('X', new THREE.Vector3(AXIS_LABEL_OFFSET, 0, 0), '#FF0000')); axisLabels.push(createAxisLabel('Y', new THREE.Vector3(0, AXIS_LABEL_OFFSET, 0), '#00CC00')); axisLabels.push(createAxisLabel('Z', new THREE.Vector3(0, 0, AXIS_LABEL_OFFSET), '#0000FF')); }
+        function drawSurfaceOfRevolution_Manual_PerSegment() { clearSurfaceMeshes(); if (segmentsData.length === 0 || revolutionAngle <= 0 || !sharedSurfaceMaterial) return; const angleRad = THREE.MathUtils.degToRad(revolutionAngle); const rotationAxis = AXIS_VECTORS[axisOfRotation]; const numSteps = Math.max(1, Math.ceil(RADIAL_SEGMENTS * (revolutionAngle / 360))); const deltaAngle = angleRad / numSteps; const q = new THREE.Quaternion(); segmentsData.forEach(seg => { const geometry = new THREE.BufferGeometry(); const vertices = []; const indices = []; let indexOffset = 0; const p1_base = seg.p1.clone(); const p2_base = seg.p2.clone(); for (let i = 0; i < numSteps; i++) { const currentAngle = i * deltaAngle; const nextAngle = (i + 1) * deltaAngle; const p1_curr = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle)); const p2_curr = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, currentAngle)); const p1_next = p1_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle)); const p2_next = p2_base.clone().applyQuaternion(q.setFromAxisAngle(rotationAxis, nextAngle)); vertices.push(p1_curr.x, p1_curr.y, p1_curr.z); vertices.push(p2_curr.x, p2_curr.y, p2_curr.z); vertices.push(p1_next.x, p1_next.y, p1_next.z); vertices.push(p2_next.x, p2_next.y, p2_next.z); indices.push(indexOffset + 0, indexOffset + 1, indexOffset + 2); indices.push(indexOffset + 1, indexOffset + 3, indexOffset + 2); indexOffset += 4; } if (vertices.length === 0) return; geometry.setIndex(indices); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.computeVertexNormals(); const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial); scene.add(segmentSurfaceMesh); surfaceMeshes.push(segmentSurfaceMesh); }); }
+        function drawCentroidPathVisual(centroid, axis) { clearCentroidPathVisual(); if (!centroid) return; const R = getDistanceToAxis(centroid, axis); if (R < 1e-6) return; const points = []; const center = new THREE.Vector3(); let uAxis = new THREE.Vector3(); let vAxis = new THREE.Vector3(); switch (axis) { case 'x': center.set(centroid.x, 0, 0); uAxis.set(0, 1, 0); vAxis.set(0, 0, 1); break; case 'y': center.set(0, centroid.y, 0); uAxis.set(1, 0, 0); vAxis.set(0, 0, 1); break; case 'z': center.set(0, 0, centroid.z); uAxis.set(1, 0, 0); vAxis.set(0, 1, 0); break; } for (let i = 0; i <= CENTROID_PATH_SEGMENTS; i++) { const angle = (i / CENTROID_PATH_SEGMENTS) * Math.PI * 2; const point = new THREE.Vector3(); point.addScaledVector(uAxis, Math.cos(angle) * R); point.addScaledVector(vAxis, Math.sin(angle) * R); point.add(center); points.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(points); const material = new THREE.LineBasicMaterial({ color: CENTROID_PATH_COLOR, linewidth: 2 }); centroidPathVisual = new THREE.LineLoop(geometry, material); centroidPathVisual.renderOrder = 1; centroidPathVisual.visible = (revolutionAngle === 360); scene.add(centroidPathVisual); }
 
 
         // --- Update Cycle --- (Same)
