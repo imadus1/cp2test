@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pappus's Theorem - Lines & Arcs (Compact Calc)</title>
+    <title>Pappus's Theorem - Lines & Arcs (Full)</title>
 
     <style>
         /* Base styles */
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: sans-serif; background-color: #f0f0f0; }
         #container { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
-        #ui-controls { width: 100%; max-height: 45vh; min-height: 180px; padding: 10px 15px; background-color: #e9e9e9; overflow-y: auto; box-sizing: border-box; border-bottom: 2px solid #ccc; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: flex-start; gap: 10px 15px; }
+        #ui-controls { width: 100%; max-height: 50vh; min-height: 200px; padding: 10px 15px; background-color: #e9e9e9; overflow-y: auto; box-sizing: border-box; border-bottom: 2px solid #ccc; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: flex-start; gap: 10px 15px; }
         #visualization-container { flex-grow: 1; position: relative; min-height: 200px; background-color: #cccccc; }
         #visualizationCanvas { display: block; width: 100%; height: 100%; }
 
@@ -21,82 +21,58 @@
         #instructions { flex-basis: 100%; background-color: #f0f8ff; border-color: #cce5ff; }
 
         /* Add Segment Controls */
-        #add-controls { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; width: 100%; padding: 5px; background: #ddd; border-radius: 4px;}
-        #add-controls label { margin-bottom: 0; font-weight: bold;}
-        #add-controls select { padding: 5px; border-radius: 3px; border: 1px solid #ccc; }
+        #add-controls { display: flex; align-items: center; gap: 10px 15px; /* Row and column gap */ margin-bottom: 10px; flex-wrap: wrap; width: 100%; padding: 5px 8px; background: #ddd; border-radius: 4px;}
+        #add-controls label { margin-bottom: 0; font-weight: bold; white-space: nowrap; }
+        #add-controls select { padding: 5px; border-radius: 3px; border: 1px solid #ccc; font-size: 0.9em;}
         #addSegmentBtn { margin-bottom: 0; }
 
 
         /* Buttons */
         button { padding: 6px 12px; margin-bottom: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; font-size: 0.9em; }
-        button:hover { background-color: #0056b3; }
+        button:not(.btn-stepper):hover { background-color: #0056b3; } /* Exclude steppers */
         .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 3px 6px; font-size: 0.75em; }
         .removeSegmentBtn:hover { background-color: #c82333; }
 
         /* Labels and Inputs */
         label { margin-right: 5px; display: inline-block; margin-bottom: 4px; font-size: 0.9em;}
-        input[type="number"] { width: 55px; padding: 4px 3px; margin: 1px 2px 1px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; font-size: 0.9em; }
+        input[type="number"] { padding: 4px 3px; margin: 1px 2px 1px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; font-size: 0.9em; width: 55px; }
         input[type="range"] { width: 150px; vertical-align: middle; }
         #angleValue { display: inline-block; width: 30px; text-align: right; font-weight: bold; margin-left: 4px; font-size: 0.9em;}
 
 
+        /* Styles for Input Stepper Buttons */
+        .input-stepper { display: inline-flex; align-items: center; margin-right: 5px; }
+        .input-stepper input[type="number"] { margin: 1px 0 1px 0; border-top-right-radius: 0; border-bottom-right-radius: 0; width: 45px; }
+        .btn-stepper { font-family: monospace; font-weight: bold; font-size: 0.9em; line-height: 1; padding: 3px 4px; min-width: 18px; height: calc(1.8em + 2px); box-sizing: border-box; border: 1px solid #ccc; border-left: none; background-color: #f8f8f8; color: #555; cursor: pointer; margin: 0; display: flex; justify-content: center; align-items: center; }
+        .btn-stepper:hover { background-color: #eee; color: #000; } .btn-stepper:active { background-color: #ddd; }
+        .btn-stepper.btn-inc { border-radius: 0; } .btn-stepper.btn-dec { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+
+        /* Point/Center/Normal/Angle Input Groups */
+         .point-input-group, .vector-input-group, .angle-input-group { display: flex; align-items: center; flex-wrap: wrap; gap: 0 5px; margin-bottom: 4px; }
+         .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: 45px; font-weight: bold; margin-right: 5px; text-align: right; font-size: 0.9em; }
+        .vector-input-group > span { min-width: 55px; } .angle-input-group > span { min-width: 80px; }
+        .angle-input-group input[type="number"] { width: 60px;}
+
+
         /* Calculations Section - Compact */
-        #calculations-section {
-             padding: 8px 10px; /* Reduced padding */
-         }
-         #calculations-section h2 {
-             margin-bottom: 5px; /* Reduced margin */
-         }
-        .calc-row {
-            display: flex;
-            justify-content: space-between; /* Space items in a row */
-            align-items: center;
-            margin-bottom: 3px; /* Reduced space between rows */
-            gap: 5px; /* Space between items if they wrap */
-            flex-wrap: wrap; /* Allow wrapping if needed */
-        }
-        .calc-item {
-            display: flex; /* Align label and value */
-            align-items: center;
-            white-space: nowrap; /* Prevent label/value breaking */
-            margin-right: 5px; /* Space between items */
-        }
-         .calc-item-wide { /* For the centroid coordinates */
-             flex-grow: 2; /* Allow centroid to take more space */
-         }
-
-        .calc-label-compact { /* Style for compact labels */
-            font-size: 0.85em;
-            color: #333;
-            margin-right: 3px; /* Space between label and value */
-        }
-
-        #calculations-section span:not(.calc-label-compact) { /* Style for values */
-            font-weight: bold;
-            background-color: #eef;
-            padding: 1px 4px; /* Slightly adjusted padding */
-            border-radius: 3px;
-            display: inline-block;
-            min-width: 40px; /* Reduced min-width */
-            text-align: right;
-            font-size: 0.9em; /* Consistent font size */
-            line-height: 1.2;
-        }
-        /* Specific Value Styling */
+        #calculations-section { padding: 8px 10px; }
+        #calculations-section h2 { margin-bottom: 5px; }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 5px; flex-wrap: wrap; }
+        .calc-item { display: flex; align-items: center; white-space: nowrap; margin-right: 5px; }
+        .calc-item-wide { flex-grow: 2; }
+        .calc-label-compact { font-size: 0.85em; color: #333; margin-right: 3px; }
+        #calculations-section span:not(.calc-label-compact) { font-weight: bold; background-color: #eef; padding: 1px 4px; border-radius: 3px; display: inline-block; min-width: 40px; text-align: right; font-size: 0.9em; line-height: 1.2; }
         #totalLength { color: #0000ff; background-color: #e0e0ff; }
-        #centroidCoords { min-width: 120px; text-align: left; background-color: #eee; color: #333;} /* Reduced min-width */
+        #centroidCoords { min-width: 120px; text-align: left; background-color: #eee; color: #333;}
         #centroidDistanceR, #centroidDistanceD, #surfaceArea { color: #0056b3; background-color: #eef; }
         #partialSurfaceArea, #calculatedDistanceR { color: #dc3545; background-color: #ffe0e0; }
-        .realtime-calc { margin-top: 5px; /* Reduced space before real-time */ }
+        .realtime-calc { margin-top: 5px; }
 
 
         /* Segment Input Area */
         .segment-input-container { margin-bottom: 10px; padding: 8px; border: 1px dashed #ccc; border-radius: 3px; background-color: #fdfdfd; }
         .segment-type-display { font-style: italic; font-size: 0.8em; color: #555; margin-bottom: 4px; display: block; }
-        .point-input-group { display: flex; align-items: center; margin-bottom: 4px; }
-        .point-input-group > span { font-weight: bold; margin-right: 5px; min-width: 45px; text-align: right; font-size: 0.9em; }
-        .center-input-group { color: #337ab7; }
-        .center-inputs { display: block; }
+        .arc-inputs { display: block; } .line-inputs { display: block; }
         .hidden { display: none !important; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
 
@@ -113,9 +89,9 @@
 
         /* Responsive Adjustments */
         @media (max-width: 768px) { #ui-controls { max-height: 55vh; } .ui-section { flex-basis: 45%; min-width: 250px; } #instructions { flex-basis: 95%;} }
-        @media (max-width: 600px) { .ui-section { flex-basis: 95%; } #ui-controls h1 { font-size: 1.1em;} #ui-controls h2 { font-size: 0.95em;} }
-        @media (max-width: 400px) { #ui-controls { padding: 5px; gap: 5px; max-height: 60vh;} .ui-section, #instructions { padding: 8px; } input[type="number"] { width: 50px; } input[type="range"] { width: 120px; } button { padding: 5px 10px; font-size: 0.85em;} .removeSegmentBtn { padding: 2px 5px; font-size: 0.7em; } .point-input-group > span { min-width: 35px;} .calc-label-compact { font-size: 0.8em; } #calculations-section span:not(.calc-label-compact) { font-size: 0.85em; min-width: 35px; padding: 1px 3px;} .calc-row { margin-bottom: 2px; } .calc-item { margin-right: 3px;} }
-
+        @media (max-width: 600px) { .ui-section { flex-basis: 95%; } #ui-controls h1 { font-size: 1.1em;} #ui-controls h2 { font-size: 0.95em;} .calc-label-compact { font-size: 0.8em; } }
+        @media (max-width: 450px) { .input-stepper { margin-right: 2px;} .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: unset; margin-right: 3px;} }
+        @media (max-width: 400px) { #ui-controls { padding: 5px; gap: 5px; max-height: 60vh;} .ui-section, #instructions { padding: 8px; } input[type="range"] { width: 120px; } button { padding: 5px 10px; font-size: 0.85em;} .removeSegmentBtn { padding: 2px 5px; font-size: 0.7em; } #calculations-section span:not(.calc-label-compact) { font-size: 0.85em; min-width: 35px; padding: 1px 3px;} .calc-row { margin-bottom: 2px; } .calc-item { margin-right: 3px;} }
     </style>
 
     <script type="importmap">
@@ -133,7 +109,7 @@
             <h1>Pappus's Theorem II</h1>
             <p>Surface Area = Total Length (L) × Centroid Path Distance (d)</p>
 
-            <!-- Add Segment Controls -->
+            <!-- Add Element Controls -->
             <div id="add-controls">
                  <label for="segmentTypeSelector">Add:</label>
                  <select id="segmentTypeSelector">
@@ -141,6 +117,17 @@
                      <option value="arc">Circular Arc</option>
                  </select>
                  <button id="addSegmentBtn">Add Element</button>
+
+                 <span style="margin-left: auto; margin-right: 5px;">or</span>
+
+                 <label for="exampleSelector">Load Example:</label>
+                 <select id="exampleSelector">
+                     <option value="" selected>Select Example...</option>
+                     <option value="fig7.1.1">figure 7.1.1</option>
+                     <option value="exo2">Example 2 (Arc XY)</option>
+                     <option value="exo3">Example 3 (Line + Arc YZ)</option>
+                     <option value="exo4">Example 4 (Multiple Lines)</option>
+                 </select>
             </div>
 
             <!-- Sections -->
@@ -150,70 +137,66 @@
             <!-- Compact Calculations Section -->
             <div id="calculations-section" class="ui-section">
                 <h2>Calculations</h2>
-                <div class="calc-row">
-                    <div class="calc-item">
-                        <span class="calc-label-compact">L:</span>
-                        <span id="totalLength">0.000</span>
-                    </div>
-                     <div class="calc-item calc-item-wide">
-                        <span class="calc-label-compact">C:</span>
-                        <span id="centroidCoords">N/A</span>
-                    </div>
-                </div>
-                 <div class="calc-row realtime-calc">
-                     <div class="calc-item">
-                        <span class="calc-label-compact">S (partial):</span>
-                        <span id="partialSurfaceArea">0.000</span>
-                    </div>
-                     <div class="calc-item">
-                        <span class="calc-label-compact">R (S/2πL):</span>
-                        <span id="calculatedDistanceR">0.000</span>
-                    </div>
-                </div>
-                <div class="calc-row">
-                     <div class="calc-item">
-                        <span class="calc-label-compact">R (full):</span>
-                        <span id="centroidDistanceR">0.000</span>
-                    </div>
-                    <div class="calc-item">
-                        <span class="calc-label-compact">d (2πR_full):</span>
-                        <span id="centroidDistanceD">0.000</span>
-                    </div>
-                    <div class="calc-item">
-                        <span class="calc-label-compact">Area (L*d):</span>
-                        <span id="surfaceArea">0.000</span>
-                    </div>
-                </div>
+                <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">L:</span> <span id="totalLength">0.000</span> </div> <div class="calc-item calc-item-wide"> <span class="calc-label-compact">C:</span> <span id="centroidCoords">N/A</span> </div> </div>
+                <div class="calc-row realtime-calc"> <div class="calc-item"> <span class="calc-label-compact">S (partial):</span> <span id="partialSurfaceArea">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">R (S/2πL):</span> <span id="calculatedDistanceR">0.000</span> </div> </div>
+                <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">R (full):</span> <span id="centroidDistanceR">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">d (2πR_full):</span> <span id="centroidDistanceD">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">Area (L*d):</span> <span id="surfaceArea">0.000</span> </div> </div>
             </div>
 
-            <div id="instructions" class="ui-section"><p><strong>Instructions:</strong></p><ul><li>Select 'Line Segment' or 'Circular Arc' and click 'Add Element'.</li><li>For Arcs, define Start (P1), End (P2), and Center (C).</li><li>Remove elements using the 'Remove' button.</li><li>Use mouse (Left-drag: rotate, Right-drag: pan, Wheel: zoom) to view.</li><li>Select rotation axis (X, Y, or Z). Standard axes shown (X:Red, Y:Green, Z:Blue).</li><li>Adjust the slider to see partial revolution and real-time calculation updates.</li><li>Calculations apply to the entire shape (all lines and arcs combined).</li></ul></div>
+            <div id="instructions" class="ui-section"><p><strong>Instructions:</strong></p><ul><li>Select 'Line Segment' or 'Circular Arc' and click 'Add Element', or load an example.</li><li>For Lines: define P1, P2.</li><li>For Arcs: define Center, Radius, Normal (plane orientation), Start Angle (0° = reference dir in plane), and Sweep Angle (extent).</li><li>Use +/- buttons or type to modify coordinates/parameters.</li><li>Remove elements using the 'Remove' button.</li><li>Use mouse (Left-drag: rotate, Right-drag: pan, Wheel: zoom) to view.</li><li>Select rotation axis (X, Y, or Z). Standard axes shown (X:Red, Y:Green, Z:Blue).</li><li>Adjust the slider to see partial revolution and real-time calculation updates.</li><li>Calculations apply to the entire shape (all lines and arcs combined).</li></ul></div>
         </div>
         <div id="visualization-container"><canvas id="visualizationCanvas"></canvas></div>
     </div>
 
-    <!-- Segment Template -->
+    <!-- Element Template -->
     <template id="segmentTemplate">
         <div class="segment-input-container" data-type="line">
             <button class="removeSegmentBtn">Remove</button>
             <span class="segment-type-display">Line Segment</span>
-            <div class="point-input-group">
-                <span>P1:</span>
-                <input type="number" class="coord p1x" value="0" step="0.1" placeholder="X" title="P1 X">
-                <input type="number" class="coord p1y" value="0" step="0.1" placeholder="Y" title="P1 Y">
-                <input type="number" class="coord p1z" value="0" step="0.1" placeholder="Z" title="P1 Z">
+
+            <!-- Inputs for Line -->
+            <div class="line-inputs">
+                <div class="point-input-group">
+                    <span>P1:</span>
+                    <div class="input-stepper"><input type="number" class="coord p1x" value="0" step="0.1" title="P1 X"><button class="btn-stepper btn-inc" data-target=".p1x">+</button><button class="btn-stepper btn-dec" data-target=".p1x">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord p1y" value="0" step="0.1" title="P1 Y"><button class="btn-stepper btn-inc" data-target=".p1y">+</button><button class="btn-stepper btn-dec" data-target=".p1y">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord p1z" value="0" step="0.1" title="P1 Z"><button class="btn-stepper btn-inc" data-target=".p1z">+</button><button class="btn-stepper btn-dec" data-target=".p1z">-</button></div>
+                </div>
+                 <div class="point-input-group">
+                     <span>P2:</span>
+                    <div class="input-stepper"><input type="number" class="coord p2x" value="1" step="0.1" title="P2 X"><button class="btn-stepper btn-inc" data-target=".p2x">+</button><button class="btn-stepper btn-dec" data-target=".p2x">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord p2y" value="1" step="0.1" title="P2 Y"><button class="btn-stepper btn-inc" data-target=".p2y">+</button><button class="btn-stepper btn-dec" data-target=".p2y">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord p2z" value="0" step="0.1" title="P2 Z"><button class="btn-stepper btn-inc" data-target=".p2z">+</button><button class="btn-stepper btn-dec" data-target=".p2z">-</button></div>
+                </div>
             </div>
-             <div class="point-input-group">
-                 <span>P2:</span>
-                <input type="number" class="coord p2x" value="1" step="0.1" placeholder="X" title="P2 X">
-                <input type="number" class="coord p2y" value="1" step="0.1" placeholder="Y" title="P2 Y">
-                <input type="number" class="coord p2z" value="0" step="0.1" placeholder="Z" title="P2 Z">
+
+            <!-- Inputs for Arc -->
+            <div class="arc-inputs hidden">
+                 <div class="point-input-group">
+                     <span>Center:</span>
+                     <div class="input-stepper"><input type="number" class="coord cx" value="0" step="0.1" title="Center X"><button class="btn-stepper btn-inc" data-target=".cx">+</button><button class="btn-stepper btn-dec" data-target=".cx">-</button></div>
+                     <div class="input-stepper"><input type="number" class="coord cy" value="0" step="0.1" title="Center Y"><button class="btn-stepper btn-inc" data-target=".cy">+</button><button class="btn-stepper btn-dec" data-target=".cy">-</button></div>
+                     <div class="input-stepper"><input type="number" class="coord cz" value="0" step="0.1" title="Center Z"><button class="btn-stepper btn-inc" data-target=".cz">+</button><button class="btn-stepper btn-dec" data-target=".cz">-</button></div>
+                 </div>
+                 <div class="vector-input-group"> <!-- Group for Radius -->
+                     <span>Radius:</span>
+                     <div class="input-stepper"><input type="number" class="coord radius" value="1" step="0.1" min="0.01" title="Radius (must be > 0)"><button class="btn-stepper btn-inc" data-target=".radius">+</button><button class="btn-stepper btn-dec" data-target=".radius">-</button></div>
+                 </div>
+                <div class="vector-input-group">
+                    <span>Normal:</span>
+                    <div class="input-stepper"><input type="number" class="coord nx" value="0" step="0.1" title="Normal X"><button class="btn-stepper btn-inc" data-target=".nx">+</button><button class="btn-stepper btn-dec" data-target=".nx">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord ny" value="0" step="0.1" title="Normal Y"><button class="btn-stepper btn-inc" data-target=".ny">+</button><button class="btn-stepper btn-dec" data-target=".ny">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord nz" value="1" step="0.1" title="Normal Z (cannot be all zero)"><button class="btn-stepper btn-inc" data-target=".nz">+</button><button class="btn-stepper btn-dec" data-target=".nz">-</button></div>
+                </div>
+                 <div class="angle-input-group">
+                     <span>Start Angle:</span>
+                     <div class="input-stepper"><input type="number" class="coord startAngle" value="0" step="5" title="Start Angle (degrees)"><button class="btn-stepper btn-inc" data-target=".startAngle" data-step="5">+</button><button class="btn-stepper btn-dec" data-target=".startAngle" data-step="5">-</button></div>
+                 </div>
+                 <div class="angle-input-group">
+                    <span>Sweep Angle:</span>
+                    <div class="input-stepper"><input type="number" class="coord sweepAngle" value="90" step="5" min="1" max="359" title="Sweep Angle (degrees, 1-359)"><button class="btn-stepper btn-inc" data-target=".sweepAngle" data-step="5">+</button><button class="btn-stepper btn-dec" data-target=".sweepAngle" data-step="5">-</button></div>
+                </div>
             </div>
-            <div class="point-input-group center-input-group center-inputs hidden">
-                 <span>Center:</span>
-                <input type="number" class="coord cx" value="0.5" step="0.1" placeholder="X" title="Center X">
-                <input type="number" class="coord cy" value="0.5" step="0.1" placeholder="Y" title="Center Y">
-                <input type="number" class="coord cz" value="0" step="0.1" placeholder="Z" title="Center Z">
-            </div>
+
         </div>
     </template>
 
@@ -236,20 +219,15 @@
         const EPSILON = 1e-5;
 
         // --- Constants ---
-        const SEGMENT_COLOR = 0x0000ff;
-        const ARC_COLOR = 0x9900ff;
-        const SURFACE_COLOR = 0xffa500;
-        const CENTROID_PATH_COLOR = 0x00ff00;
-        const RADIAL_SEGMENTS = 32;
-        const ARC_SUBDIVISIONS = 16;
-        const CENTROID_PATH_SEGMENTS = 64;
-        const AXIS_LABEL_OFFSET = 6.0;
-        const AXIS_LABEL_SIZE = 1.5;
+        const SEGMENT_COLOR = 0x0000ff; const ARC_COLOR = 0x9900ff; const SURFACE_COLOR = 0xffa500; const CENTROID_PATH_COLOR = 0x00ff00;
+        const RADIAL_SEGMENTS = 32; const ARC_SUBDIVISIONS = 16; const CENTROID_PATH_SEGMENTS = 64;
+        const AXIS_LABEL_OFFSET = 6.0; const AXIS_LABEL_SIZE = 1.5;
 
         // --- DOM Elements ---
         const segmentsContainer = document.getElementById('segmentsContainer');
         const addSegmentBtn = document.getElementById('addSegmentBtn');
         const segmentTypeSelector = document.getElementById('segmentTypeSelector');
+        const exampleSelector = document.getElementById('exampleSelector');
         const segmentTemplate = document.getElementById('segmentTemplate');
         const revolutionSlider = document.getElementById('revolutionSlider');
         const angleValueSpan = document.getElementById('angleValue');
@@ -264,6 +242,25 @@
 
         // --- Rotation Axis Vectors ---
         const AXIS_VECTORS = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
+
+        // --- PREDEFINED EXAMPLES ---
+        const predefinedExamples = {
+            fig7.1.1: [
+                 { type: 'line', p1x: 0, p1y: 0, p1z: 0, p2x: 0, p2y: 1.5, p2z: 0 },
+                 { type: 'line', p1x: 0, p1y: 1.5, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 0, p2y: 0, p2z: 0 },
+             ],
+            exo2: [ { type: 'arc', cx: 0, cy: 0, cz: 0, radius: 2, nx: 0, ny: 0, nz: 1, startAngle: 0, sweepAngle: 90 } ],
+            exo3: [
+                { type: 'line', p1x: 0, p1y: 1, p1z: 2, p2x: 0, p2y: 2, p2z: 2 }, // Line parallel to Y in YZ plane
+                { type: 'arc', cx: 0, cy: 0, cz: 2, radius: 2, nx: 1, ny: 0, nz: 0, startAngle: 90, sweepAngle: 90 } // Arc in YZ plane (Normal X) connecting to P2
+            ],
+             exo4: [
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
+             ]
+        };
 
         // --- Initialization ---
         function init() {
@@ -282,9 +279,9 @@
 
             // Load Environment Map
             const loader = new THREE.CubeTextureLoader();
-            const texturePath = './textures/cube/bridge2/'; // Example path - CHANGE IF NEEDED
+            const texturePath = './textures/cube/bridge2/'; // Example path - !!! CHANGE IF NEEDED !!!
             const textureFiles = [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ];
-            try { const textureCube = loader.setPath(texturePath).load( textureFiles, () => { console.log("Env map loaded."); }, undefined, (error) => { console.error(`Error loading env map from ${texturePath}:`, error); alert(`Could not load env map textures from ${texturePath}.`); }); scene.environment = textureCube; } catch (e) { console.error("Failed env map load setup:", e); alert("Error setting up env map loader."); }
+            try { const textureCube = loader.setPath(texturePath).load( textureFiles, () => { console.log("Env map loaded."); }, undefined, (error) => { console.error(`Error loading env map from ${texturePath}:`, error); /* alert(`Could not load env map textures from ${texturePath}.`); */ }); scene.environment = textureCube; } catch (e) { console.error("Failed env map load setup:", e); /* alert("Error setting up env map loader."); */ }
 
             // Create Shared Surface Material
             sharedSurfaceMaterial = new THREE.MeshStandardMaterial({ color: SURFACE_COLOR, transparent: true, opacity: 0.65, side: THREE.DoubleSide, metalness: 0.2, roughness: 0.3, envMapIntensity: 1.0, refractionRatio: 0.95, });
@@ -293,18 +290,17 @@
             axisHelper = new THREE.AxesHelper(5); scene.add(axisHelper); createAxisLabels();
 
             // Event Listeners
-            addSegmentBtn.addEventListener('click', () => addSegmentUI(true)); // Ensure update on manual add
+            addSegmentBtn.addEventListener('click', () => addSegmentUI(true));
             segmentsContainer.addEventListener('input', handleSegmentInputChange);
             segmentsContainer.addEventListener('click', handleRemoveSegmentClick);
+            segmentsContainer.addEventListener('click', handleStepperClick);
+            exampleSelector.addEventListener('change', loadPredefinedExample);
             revolutionSlider.addEventListener('input', handleRevolutionSlider);
             axisRadios.forEach(radio => radio.addEventListener('change', handleAxisChange));
             window.addEventListener('resize', resizeRenderer);
 
             // Initial Setup
-            addSegmentUI(false); // Add default without triggering update yet
-            const firstSegInputs = segmentsContainer.querySelector('.segment-input-container');
-            if (firstSegInputs) { firstSegInputs.querySelector('.p1x').value = 0.5; firstSegInputs.querySelector('.p1y').value = 1; firstSegInputs.querySelector('.p2x').value = 1.5; firstSegInputs.querySelector('.p2y').value = 2; firstSegInputs.querySelector('.p2z').value = 0.5; }
-            updateVisualizationAndCalculations(); // Now update
+            loadPredefinedExample('exo1'); // Load Example 1 initially
             animate();
         }
 
@@ -312,53 +308,50 @@
         function resizeRenderer() { const vizContainer = document.getElementById('visualization-container'); const width = vizContainer.clientWidth; const height = vizContainer.clientHeight; if (width === 0 || height === 0) return; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); }
 
         // --- UI Management ---
-         function addSegmentUI(update = true) {
-            const selectedType = segmentTypeSelector.value;
+         function addSegmentUI(update = true, data = null) {
+            const selectedType = data ? data.type : segmentTypeSelector.value;
             const templateContent = segmentTemplate.content.cloneNode(true);
             const containerDiv = templateContent.querySelector('.segment-input-container');
-            const centerInputsDiv = templateContent.querySelector('.center-inputs');
+            const lineInputsDiv = templateContent.querySelector('.line-inputs');
+            const arcInputsDiv = templateContent.querySelector('.arc-inputs');
             const typeDisplaySpan = templateContent.querySelector('.segment-type-display');
             containerDiv.dataset.type = selectedType;
-            if (selectedType === 'line') { typeDisplaySpan.textContent = 'Line Segment'; centerInputsDiv.classList.add('hidden'); }
-            else { typeDisplaySpan.textContent = 'Circular Arc'; centerInputsDiv.classList.remove('hidden'); const p1yInput = templateContent.querySelector('.p1y'); const p2xInput = templateContent.querySelector('.p2x'); const cxInput = templateContent.querySelector('.cx'); const cyInput = templateContent.querySelector('.cy'); if(p1yInput) p1yInput.value = 2; if(p2xInput) p2xInput.value = 2; if(cxInput) cxInput.value = 1; if(cyInput) cyInput.value = 1; }
+            const inputs = { p1x: containerDiv.querySelector('.p1x'), p1y: containerDiv.querySelector('.p1y'), p1z: containerDiv.querySelector('.p1z'), p2x: containerDiv.querySelector('.p2x'), p2y: containerDiv.querySelector('.p2y'), p2z: containerDiv.querySelector('.p2z'), cx: containerDiv.querySelector('.cx'), cy: containerDiv.querySelector('.cy'), cz: containerDiv.querySelector('.cz'), radius: containerDiv.querySelector('.radius'), nx: containerDiv.querySelector('.nx'), ny: containerDiv.querySelector('.ny'), nz: containerDiv.querySelector('.nz'), startAngle: containerDiv.querySelector('.startAngle'), sweepAngle: containerDiv.querySelector('.sweepAngle') };
+            if (selectedType === 'line') { typeDisplaySpan.textContent = 'Line Segment'; lineInputsDiv.classList.remove('hidden'); arcInputsDiv.classList.add('hidden'); if (data) { inputs.p1x.value = data.p1x ?? 0; inputs.p1y.value = data.p1y ?? 0; inputs.p1z.value = data.p1z ?? 0; inputs.p2x.value = data.p2x ?? 1; inputs.p2y.value = data.p2y ?? 1; inputs.p2z.value = data.p2z ?? 0; } }
+            else { typeDisplaySpan.textContent = 'Circular Arc'; lineInputsDiv.classList.add('hidden'); arcInputsDiv.classList.remove('hidden'); if (data) { inputs.cx.value = data.cx ?? 0; inputs.cy.value = data.cy ?? 0; inputs.cz.value = data.cz ?? 0; inputs.radius.value = data.radius ?? 1; inputs.nx.value = data.nx ?? 0; inputs.ny.value = data.ny ?? 0; inputs.nz.value = data.nz ?? 1; inputs.startAngle.value = data.startAngle ?? 0; inputs.sweepAngle.value = data.sweepAngle ?? 90; } else { inputs.radius.value = 1.5; inputs.nz.value = 1; inputs.sweepAngle.value = 180; } }
             segmentsContainer.appendChild(templateContent);
             if(update) updateVisualizationAndCalculations();
         }
+        function loadPredefinedExample(eventOrKey) {
+             let selectedKey = ''; if (typeof eventOrKey === 'string') { selectedKey = eventOrKey; exampleSelector.value = selectedKey; } else { selectedKey = eventOrKey.target.value; }
+            if (!selectedKey || !predefinedExamples[selectedKey]) { if (selectedKey === "") { segmentsContainer.innerHTML = ''; updateVisualizationAndCalculations(); } return; }
+            const exampleData = predefinedExamples[selectedKey]; segmentsContainer.innerHTML = ''; exampleData.forEach(itemData => { addSegmentUI(false, itemData); }); updateVisualizationAndCalculations();
+            // exampleSelector.value = ""; // Optional: Reset dropdown
+        }
         function handleSegmentInputChange(event) { if (event.target.classList.contains('coord')) { updateVisualizationAndCalculations(); } }
         function handleRemoveSegmentClick(event) { if (event.target.classList.contains('removeSegmentBtn')) { event.target.closest('.segment-input-container').remove(); updateVisualizationAndCalculations(); } }
+        function handleStepperClick(event) { const target = event.target; if (!target.classList.contains('btn-stepper')) return; event.preventDefault(); const isIncrement = target.classList.contains('btn-inc'); const inputSelector = target.dataset.target; if (!inputSelector) return; const segmentContainer = target.closest('.segment-input-container'); if (!segmentContainer) return; const inputElement = segmentContainer.querySelector(inputSelector); if (!inputElement) return; try { const stepAttr = target.dataset.step; const step = stepAttr ? parseFloat(stepAttr) : 0.1; let currentValue = parseFloat(inputElement.value) || 0; let newValue = isIncrement ? currentValue + step : currentValue - step; const min = inputElement.hasAttribute('min') ? parseFloat(inputElement.min) : null; const max = inputElement.hasAttribute('max') ? parseFloat(inputElement.max) : null; if (min !== null) newValue = Math.max(min, newValue); if (max !== null) newValue = Math.min(max, newValue); const precision = step === 5 ? 0 : 4; newValue = parseFloat(newValue.toFixed(precision)); inputElement.value = newValue; inputElement.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) { console.error("Error handling stepper click:", e); } }
         function handleRevolutionSlider(event) { revolutionAngle = parseFloat(event.target.value); angleValueSpan.textContent = revolutionAngle; clearSurfaceMeshes(); drawSurfaceOfRevolution_Manual_PerSegment(); updateRealTimeCalculations(); if (centroidPathVisual) { centroidPathVisual.visible = (revolutionAngle === 360); } }
         function handleAxisChange(event) { axisOfRotation = event.target.value; updateVisualizationAndCalculations(); }
 
         // --- Data Parsing ---
         function parseSegmentsFromUI() {
-            segmentsData = [];
-            const segmentDivs = segmentsContainer.querySelectorAll('.segment-input-container');
+            segmentsData = []; const segmentDivs = segmentsContainer.querySelectorAll('.segment-input-container');
             segmentDivs.forEach((div, index) => {
-                const type = div.dataset.type || 'line';
-                const p1 = new THREE.Vector3( parseFloat(div.querySelector('.p1x').value) || 0, parseFloat(div.querySelector('.p1y').value) || 0, parseFloat(div.querySelector('.p1z').value) || 0 );
-                const p2 = new THREE.Vector3( parseFloat(div.querySelector('.p2x').value) || 0, parseFloat(div.querySelector('.p2y').value) || 0, parseFloat(div.querySelector('.p2z').value) || 0 );
-                let elementData = { type, p1, p2, length: 0, centroid: new THREE.Vector3() }; let isValid = false; div.style.borderColor = '#ccc';
-                if (type === 'line') { if (p1.distanceTo(p2) > EPSILON) { elementData.length = p1.distanceTo(p2); elementData.centroid.addVectors(p1, p2).multiplyScalar(0.5); isValid = true; } else { console.warn(`Line ${index+1}: Start/end points too close.`); div.style.borderColor = 'orange'; } }
+                const type = div.dataset.type || 'line'; let elementData = { type, length: 0, centroid: new THREE.Vector3(), p1: new THREE.Vector3(), p2: new THREE.Vector3() }; let isValid = false; div.style.borderColor = '#ccc';
+                if (type === 'line') { const p1 = new THREE.Vector3( parseFloat(div.querySelector('.p1x').value) || 0, parseFloat(div.querySelector('.p1y').value) || 0, parseFloat(div.querySelector('.p1z').value) || 0 ); const p2 = new THREE.Vector3( parseFloat(div.querySelector('.p2x').value) || 0, parseFloat(div.querySelector('.p2y').value) || 0, parseFloat(div.querySelector('.p2z').value) || 0 ); elementData.p1 = p1; elementData.p2 = p2; if (p1.distanceTo(p2) > EPSILON) { elementData.length = p1.distanceTo(p2); elementData.centroid.addVectors(p1, p2).multiplyScalar(0.5); isValid = true; } else { console.warn(`Line ${index+1}: Start/end points too close.`); div.style.borderColor = 'orange'; } }
                 else if (type === 'arc') {
-                    const center = new THREE.Vector3( parseFloat(div.querySelector('.cx').value) || 0, parseFloat(div.querySelector('.cy').value) || 0, parseFloat(div.querySelector('.cz').value) || 0 );
-                    const radius1 = center.distanceTo(p1); const radius2 = center.distanceTo(p2);
-                    if (radius1 < EPSILON) { console.warn(`Arc ${index+1}: Radius zero.`); div.style.borderColor = 'orange'; }
-                    else if (Math.abs(radius1 - radius2) > EPSILON * radius1) { console.warn(`Arc ${index+1}: P1/P2 not equidistant from C.`); div.style.borderColor = 'orange'; }
-                    else if (p1.distanceTo(p2) < EPSILON) { console.warn(`Arc ${index+1}: P1/P2 same.`); div.style.borderColor = 'orange'; }
+                    const center = new THREE.Vector3( parseFloat(div.querySelector('.cx').value) || 0, parseFloat(div.querySelector('.cy').value) || 0, parseFloat(div.querySelector('.cz').value) || 0 ); const radius = parseFloat(div.querySelector('.radius').value) || 0; const normal = new THREE.Vector3( parseFloat(div.querySelector('.nx').value) || 0, parseFloat(div.querySelector('.ny').value) || 0, parseFloat(div.querySelector('.nz').value) || 0 ); const startAngleDeg = parseFloat(div.querySelector('.startAngle').value) || 0; const sweepAngleDeg = parseFloat(div.querySelector('.sweepAngle').value) || 0;
+                    if (radius <= EPSILON) { console.warn(`Arc ${index+1}: Radius must be positive.`); div.style.borderColor = 'orange'; }
+                    else if (normal.lengthSq() < EPSILON * EPSILON) { console.warn(`Arc ${index+1}: Normal vector zero length.`); div.style.borderColor = 'red'; }
+                    else if (sweepAngleDeg <= EPSILON || sweepAngleDeg >= 360) { console.warn(`Arc ${index+1}: Sweep angle invalid (must be >0 and <360).`); div.style.borderColor = 'orange'; }
                     else {
-                        const v1 = p1.clone().sub(center); const v2 = p2.clone().sub(center); const v1_norm = v1.clone().normalize(); const v2_norm = v2.clone().normalize();
-                        elementData.radius = radius1; elementData.center = center;
-                        let dot = v1_norm.dot(v2_norm); dot = Math.max(-1.0, Math.min(1.0, dot)); elementData.sweepAngle = Math.acos(dot);
-                        if (elementData.sweepAngle < EPSILON) { console.warn(`Arc ${index+1}: Sweep angle too small.`); div.style.borderColor = 'orange'; }
-                        else {
-                            elementData.length = elementData.radius * elementData.sweepAngle;
-                            elementData.normal = new THREE.Vector3().crossVectors(v1, v2);
-                            if (elementData.normal.lengthSq() < EPSILON * EPSILON) { console.warn(`Arc ${index+1}: Collinear points.`); div.style.borderColor = 'red'; elementData.normal.set(0,0,1); }
-                            else {
-                                elementData.normal.normalize();
-                                const centroidDist = (elementData.radius * 2 * Math.sin(elementData.sweepAngle / 2)) / elementData.sweepAngle;
-                                const bisectorDir = v1_norm.clone().add(v2_norm).normalize(); elementData.centroid.copy(center).addScaledVector(bisectorDir, centroidDist); isValid = true;
-                             } } } }
+                        elementData.center = center; elementData.radius = radius; elementData.normal = normal.normalize(); elementData.startAngleRad = THREE.MathUtils.degToRad(startAngleDeg); elementData.sweepAngleRad = THREE.MathUtils.degToRad(sweepAngleDeg); elementData.length = elementData.radius * elementData.sweepAngleRad;
+                        let a = (Math.abs(elementData.normal.x) < 0.9) ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const u = new THREE.Vector3().crossVectors(elementData.normal, a).normalize(); const v = new THREE.Vector3().crossVectors(elementData.normal, u).normalize();
+                        elementData.p1 = elementData.center.clone().addScaledVector(u, elementData.radius * Math.cos(elementData.startAngleRad)).addScaledVector(v, elementData.radius * Math.sin(elementData.startAngleRad)); const endAngleRad = elementData.startAngleRad + elementData.sweepAngleRad; elementData.p2 = elementData.center.clone().addScaledVector(u, elementData.radius * Math.cos(endAngleRad)).addScaledVector(v, elementData.radius * Math.sin(endAngleRad));
+                        const centroidDist = (elementData.sweepAngleRad === 0) ? elementData.radius : (elementData.radius * 2 * Math.sin(elementData.sweepAngleRad / 2)) / elementData.sweepAngleRad;
+                        const midAngleRad = elementData.startAngleRad + elementData.sweepAngleRad / 2; elementData.centroid = elementData.center.clone().addScaledVector(u, centroidDist * Math.cos(midAngleRad)).addScaledVector(v, centroidDist * Math.sin(midAngleRad)); isValid = true;
+                     } }
                  if(isValid) { segmentsData.push(elementData); } else { console.log(`Skipping invalid element ${index+1}`); } });
         }
 
@@ -375,7 +368,7 @@
 
         function drawSegments() {
             const lineMaterial = new THREE.LineBasicMaterial({ color: SEGMENT_COLOR, linewidth: 2 }); const arcMaterial = new THREE.LineBasicMaterial({ color: ARC_COLOR, linewidth: 2 });
-            segmentsData.forEach(seg => { let line; if (seg.type === 'line') { const geometry = new THREE.BufferGeometry().setFromPoints([seg.p1, seg.p2]); line = new THREE.Line(geometry, lineMaterial); } else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngle > EPSILON) { const arcPoints = []; const v1 = seg.p1.clone().sub(seg.center); const xAxis = v1.clone().normalize(); const yAxis = new THREE.Vector3().crossVectors(seg.normal, xAxis).normalize(); for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = (i / ARC_SUBDIVISIONS) * seg.sweepAngle; const point = seg.center.clone().addScaledVector(xAxis, seg.radius * Math.cos(angle)).addScaledVector(yAxis, seg.radius * Math.sin(angle)); arcPoints.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(arcPoints); line = new THREE.Line(geometry, arcMaterial); } if (line) { scene.add(line); segmentLines.push(line); } });
+            segmentsData.forEach(seg => { let line = null; if (seg.type === 'line') { const geometry = new THREE.BufferGeometry().setFromPoints([seg.p1, seg.p2]); line = new THREE.Line(geometry, lineMaterial); } else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngleRad > EPSILON) { let a = (Math.abs(seg.normal.x) < 0.9) ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const u = new THREE.Vector3().crossVectors(seg.normal, a).normalize(); const v = new THREE.Vector3().crossVectors(seg.normal, u).normalize(); const arcPoints = []; for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = seg.startAngleRad + (i / ARC_SUBDIVISIONS) * seg.sweepAngleRad; const point = seg.center.clone().addScaledVector(u, seg.radius * Math.cos(angle)).addScaledVector(v, seg.radius * Math.sin(angle)); arcPoints.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(arcPoints); line = new THREE.Line(geometry, arcMaterial); } if (line) { scene.add(line); segmentLines.push(line); } });
         }
 
         function createAxisLabel(text, position, color) { const canvas = document.createElement('canvas'); const context = canvas.getContext('2d'); const fontSize = 48; context.font = `Bold ${fontSize}px Arial`; const metrics = context.measureText(text); const textWidth = metrics.width; canvas.width = textWidth + 20; canvas.height = fontSize + 10; context.font = `Bold ${fontSize}px Arial`; context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, canvas.width / 2, canvas.height / 2); const texture = new THREE.CanvasTexture(canvas); texture.needsUpdate = true; const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); const sprite = new THREE.Sprite(material); const aspect = canvas.width / canvas.height; sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); sprite.position.copy(position); sprite.renderOrder = 2; scene.add(sprite); return sprite; }
@@ -387,7 +380,7 @@
             segmentsData.forEach(seg => {
                 const geometry = new THREE.BufferGeometry(); const vertices = []; const indices = []; let indexOffset = 0; const profilePoints = [];
                 if (seg.type === 'line') { profilePoints.push(seg.p1.clone()); profilePoints.push(seg.p2.clone()); }
-                else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngle > EPSILON) { const v1 = seg.p1.clone().sub(seg.center); const xAxis = v1.clone().normalize(); const yAxis = new THREE.Vector3().crossVectors(seg.normal, xAxis).normalize(); for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = (i / ARC_SUBDIVISIONS) * seg.sweepAngle; const point = seg.center.clone().addScaledVector(xAxis, seg.radius * Math.cos(angle)).addScaledVector(yAxis, seg.radius * Math.sin(angle)); profilePoints.push(point); } }
+                else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngleRad > EPSILON) { let a = (Math.abs(seg.normal.x) < 0.9) ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const u = new THREE.Vector3().crossVectors(seg.normal, a).normalize(); const v = new THREE.Vector3().crossVectors(seg.normal, u).normalize(); for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = seg.startAngleRad + (i / ARC_SUBDIVISIONS) * seg.sweepAngleRad; const point = seg.center.clone().addScaledVector(u, seg.radius * Math.cos(angle)).addScaledVector(v, seg.radius * Math.sin(angle)); profilePoints.push(point); } }
                 if (profilePoints.length < 2) return;
                 for (let i = 0; i < numSteps; i++) { const currentAngle = i * deltaAngle; const nextAngle = (i + 1) * deltaAngle; const pointsCurrent = profilePoints.map(p => p.clone().applyQuaternion(q.setFromAxisAngle(rotationAxisVec, currentAngle))); const pointsNext = profilePoints.map(p => p.clone().applyQuaternion(q.setFromAxisAngle(rotationAxisVec, nextAngle))); for (let j = 0; j < profilePoints.length - 1; j++) { const pA_curr = pointsCurrent[j]; const pB_curr = pointsCurrent[j + 1]; const pA_next = pointsNext[j]; const pB_next = pointsNext[j + 1]; vertices.push(pA_curr.x, pA_curr.y, pA_curr.z); vertices.push(pB_curr.x, pB_curr.y, pB_curr.z); vertices.push(pA_next.x, pA_next.y, pA_next.z); vertices.push(pB_next.x, pB_next.y, pB_next.z); indices.push(indexOffset + 0, indexOffset + 1, indexOffset + 2); indices.push(indexOffset + 1, indexOffset + 3, indexOffset + 2); indexOffset += 4; } }
                 if (vertices.length === 0) return; geometry.setIndex(indices); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.computeVertexNormals(); const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial); scene.add(segmentSurfaceMesh); surfaceMeshes.push(segmentSurfaceMesh); });
