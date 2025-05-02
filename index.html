@@ -124,9 +124,11 @@
                  <select id="exampleSelector">
                      <option value="" selected>Select Example...</option>
                      <option value="fig711">Figure 7.1.1</option>
-                     <option value="ex2">Example 2 (Arc XY)</option>
-                     <option value="ex3">Example 3 (Line + Arc YZ)</option>
-                     <option value="ex4">Example 4 (Multiple Lines)</option>
+                     <option value="fig712">Figure 7.1.2</option>
+                     <option value="fig713">Figure 7.1.3</option>
+                     <option value="fig714">Figure 7.1.4</option>
+                     <option value="fig715">Figure 7.1.5</option>
+                     <option value="fig716">Figure 7.1.6</option>
                  </select>
             </div>
 
@@ -250,12 +252,22 @@
                  { type: 'line', p1x: 0, p1y: 2, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
                  { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 0, p2y: 0, p2z: 0 },
              ],
-            exo2: [ { type: 'arc', cx: 0, cy: 0, cz: 0, radius: 2, nx: 0, ny: 0, nz: 1, startAngle: 0, sweepAngle: 90 } ],
-            exo3: [
+            fig712: [ { type: 'arc', cx: 0, cy: 0, cz: 0, radius: 2, nx: 0, ny: 0, nz: 1, startAngle: 0, sweepAngle: 90 } ],
+            fig713: [
                 { type: 'line', p1x: 0, p1y: 1, p1z: 2, p2x: 0, p2y: 2, p2z: 2 }, // Line parallel to Y in YZ plane
                 { type: 'arc', cx: 0, cy: 0, cz: 2, radius: 2, nx: 1, ny: 0, nz: 0, startAngle: 90, sweepAngle: 90 } // Arc in YZ plane (Normal X) connecting to P2
             ],
-             exo4: [
+             fig714: [
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
+             ],
+            fig715: [
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
+                 { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
+             ],
+            fig716: [
                  { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
                  { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
                  { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
