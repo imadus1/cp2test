@@ -123,10 +123,10 @@
                  <label for="exampleSelector">Load Example:</label>
                  <select id="exampleSelector">
                      <option value="" selected>Select Example...</option>
-                     <option value="exo1">Example 1 (Line)</option>
-                     <option value="exo2">Example 2 (Arc XY)</option>
-                     <option value="exo3">Example 3 (Line + Arc YZ)</option>
-                     <option value="exo4">Example 4 (Multiple Lines)</option>
+                     <option value="fig711">Figure 7.1.1</option>
+                     <option value="ex2">Example 2 (Arc XY)</option>
+                     <option value="ex3">Example 3 (Line + Arc YZ)</option>
+                     <option value="ex4">Example 4 (Multiple Lines)</option>
                  </select>
             </div>
 
@@ -245,7 +245,11 @@
 
         // --- PREDEFINED EXAMPLES ---
         const predefinedExamples = {
-            exo1: [ { type: 'line', p1x: 0.5, p1y: 1, p1z: 0, p2x: 1.5, p2y: 1, p2z: 0 } ],
+            fig711: [
+                 { type: 'line', p1x: 0, p1y: 0, p1z: 0, p2x: 0, p2y: 2, p2z: 0 },
+                 { type: 'line', p1x: 0, p1y: 2, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 0, p2y: 0, p2z: 0 },
+             ],
             exo2: [ { type: 'arc', cx: 0, cy: 0, cz: 0, radius: 2, nx: 0, ny: 0, nz: 1, startAngle: 0, sweepAngle: 90 } ],
             exo3: [
                 { type: 'line', p1x: 0, p1y: 1, p1z: 2, p2x: 0, p2y: 2, p2z: 2 }, // Line parallel to Y in YZ plane
@@ -296,7 +300,7 @@
             window.addEventListener('resize', resizeRenderer);
 
             // Initial Setup
-            loadPredefinedExample('exo1'); // Load Example 1 initially
+            loadPredefinedExample('fig7.1.1'); // Load Example 1 initially
             animate();
         }
 
