@@ -3,60 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pappus's Theorem - Lines & Arcs (Full)</title>
+    <title>Pappus's Theorem - Lines & Arcs (Collapsible Tabs)</title>
 
     <style>
         /* Base styles */
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: sans-serif; background-color: #f0f0f0; }
         #container { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
-        #ui-controls { width: 100%; max-height: 50vh; min-height: 200px; padding: 10px 15px; background-color: #e9e9e9; overflow-y: auto; box-sizing: border-box; border-bottom: 2px solid #ccc; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: flex-start; gap: 10px 15px; }
+        #ui-controls {
+            width: 100%;
+            max-height: 55vh; /* Adjust as needed */
+            min-height: 80px; /* Min height for settings/tabs */
+            background-color: #e9e9e9;
+            border-bottom: 2px solid #ccc;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
         #visualization-container { flex-grow: 1; position: relative; min-height: 200px; background-color: #cccccc; }
         #visualizationCanvas { display: block; width: 100%; height: 100%; }
 
-        /* Headings & Sections */
-        #ui-controls h1, #ui-controls h2 { margin-top: 0; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333; width: 100%; text-align: center; font-size: 1.2em; }
-        #ui-controls h2 { font-size: 1.0em; text-align: left; margin-top: 5px; }
-        #ui-controls > p { width: 100%; text-align: center; margin: 0 0 10px 0; font-size: 0.9em; }
-        .ui-section { margin-bottom: 0; padding: 10px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex: 1 1 300px; min-width: 280px; }
-        #instructions { flex-basis: 100%; background-color: #f0f8ff; border-color: #cce5ff; }
+        /* --- Settings Section (Single Row) --- */
+        #settings-section {
+            padding: 8px 15px;
+            background-color: #f8f8f8;
+            /* border-bottom: 1px solid #ccc; /* Moved border to tab buttons */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            display: flex; /* Arrange controls horizontally */
+            align-items: center;
+            gap: 10px; /* Space between controls */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+         #axisSelector {
+             padding: 4px 6px; /* Match input height better */
+             font-size: 0.9em;
+             border: 1px solid #ccc;
+             border-radius: 3px;
+             background-color: #fff;
+             height: calc(1.8em + 4px); /* Match input height */
+             box-sizing: border-box;
+         }
+         .settings-slider-label { /* Label for slider */
+            font-weight: bold;
+            margin: 0;
+            font-size: 0.9em;
+            white-space: nowrap;
+         }
+         #revolutionSlider {
+             flex-grow: 1; /* Take available space */
+             min-width: 100px; /* Prevent shrinking too much */
+             max-width: 250px;
+             height: 18px;
+             margin: 0; /* Remove default margins */
+             vertical-align: middle;
+         }
+         #angleValue {
+            display: inline-block;
+            width: 35px; /* Slightly wider for 3 digits */
+            text-align: right;
+            font-weight: bold;
+            font-size: 0.9em;
+            padding: 4px 2px; /* Match input height */
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            height: calc(1.8em + 4px); /* Match input height */
+            line-height: 1.8em; /* Vertically center text */
+         }
 
-        /* Add Segment Controls */
-        #add-controls { display: flex; align-items: center; gap: 10px 15px; /* Row and column gap */ margin-bottom: 10px; flex-wrap: wrap; width: 100%; padding: 5px 8px; background: #ddd; border-radius: 4px;}
+
+        /* --- Tab Buttons (Below Settings) --- */
+        #tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 5px 10px;
+            background-color: #d5d5d5;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            flex-shrink: 0;
+            cursor: default; /* Indicate clickable area for collapse/expand */
+        }
+        .tab-button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-bottom: -1px; /* Overlap border */
+            font-size: 0.85em;
+            color: #333;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .tab-button:hover {
+            background-color: #e5e5e5;
+        }
+        .tab-button.active {
+            background-color: #fff;
+            color: #000;
+            font-weight: bold;
+            border-color: #ccc;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- Tab Content Area (Collapsible) --- */
+        #tab-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px 15px;
+            background-color: #fff;
+            border-top: none; /* Top border provided by tab buttons bottom border */
+            min-height: 0; /* Crucial for flex */
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, border 0.3s ease-out; /* Smooth collapse */
+            max-height: 40vh; /* Example max height, adjust based on available space */
+        }
+        #tab-content.collapsed {
+            max-height: 0;
+            overflow: hidden;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-width: 0; /* Hide borders when collapsed */
+            flex-grow: 0; /* Don't take space when collapsed */
+        }
+
+        /* --- Tab Panels (Remain the same visually when shown) --- */
+        .tab-panel {
+            display: none; /* Hide inactive panels */
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+            width: auto;
+        }
+        .tab-panel.active {
+            display: block; /* Show active panel */
+        }
+
+        /* --- Adjustments for Sections inside Tab Panels --- */
+        /* Styles for #add-controls, #instructions, #calculations-section, etc remain largely the same */
+        #add-controls { display: flex; align-items: center; gap: 10px 15px; margin-bottom: 10px; flex-wrap: wrap; width: 100%; padding: 8px; background: #eee; border-radius: 4px;}
         #add-controls label { margin-bottom: 0; font-weight: bold; white-space: nowrap; }
         #add-controls select { padding: 5px; border-radius: 3px; border: 1px solid #ccc; font-size: 0.9em;}
         #addSegmentBtn { margin-bottom: 0; }
-
-
-        /* Buttons */
-        button { padding: 6px 12px; margin-bottom: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; font-size: 0.9em; }
-        button:not(.btn-stepper):hover { background-color: #0056b3; } /* Exclude steppers */
-        .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 3px 6px; font-size: 0.75em; }
-        .removeSegmentBtn:hover { background-color: #c82333; }
-
-        /* Labels and Inputs */
-        label { margin-right: 5px; display: inline-block; margin-bottom: 4px; font-size: 0.9em;}
-        input[type="number"] { padding: 4px 3px; margin: 1px 2px 1px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; font-size: 0.9em; width: 55px; }
-        input[type="range"] { width: 150px; vertical-align: middle; }
-        #angleValue { display: inline-block; width: 30px; text-align: right; font-weight: bold; margin-left: 4px; font-size: 0.9em;}
-
-
-        /* Styles for Input Stepper Buttons */
-        .input-stepper { display: inline-flex; align-items: center; margin-right: 5px; }
-        .input-stepper input[type="number"] { margin: 1px 0 1px 0; border-top-right-radius: 0; border-bottom-right-radius: 0; width: 45px; }
-        .btn-stepper { font-family: monospace; font-weight: bold; font-size: 0.9em; line-height: 1; padding: 3px 4px; min-width: 18px; height: calc(1.8em + 2px); box-sizing: border-box; border: 1px solid #ccc; border-left: none; background-color: #f8f8f8; color: #555; cursor: pointer; margin: 0; display: flex; justify-content: center; align-items: center; }
-        .btn-stepper:hover { background-color: #eee; color: #000; } .btn-stepper:active { background-color: #ddd; }
-        .btn-stepper.btn-inc { border-radius: 0; } .btn-stepper.btn-dec { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
-
-        /* Point/Center/Normal/Angle Input Groups */
-         .point-input-group, .vector-input-group, .angle-input-group { display: flex; align-items: center; flex-wrap: wrap; gap: 0 5px; margin-bottom: 4px; }
-         .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: 45px; font-weight: bold; margin-right: 5px; text-align: right; font-size: 0.9em; }
-        .vector-input-group > span { min-width: 55px; } .angle-input-group > span { min-width: 80px; }
-        .angle-input-group input[type="number"] { width: 60px;}
-
-
-        /* Calculations Section - Compact */
+        #instructions { background-color: #f0f8ff; border-color: #cce5ff; padding: 8px 12px;}
+        #instructions p { margin: 0 0 5px 0;}
+        #instructions ul { padding-left: 18px; margin-top: 4px; margin-bottom: 4px; font-size: 0.85em; color: #333; }
+        #instructions li { margin-bottom: 4px; }
+        #instructions strong { color: #004085; }
         #calculations-section { padding: 8px 10px; }
-        #calculations-section h2 { margin-bottom: 5px; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 5px; flex-wrap: wrap; }
         .calc-item { display: flex; align-items: center; white-space: nowrap; margin-right: 5px; }
         .calc-item-wide { flex-grow: 2; }
@@ -68,30 +168,64 @@
         #partialSurfaceArea, #calculatedDistanceR { color: #dc3545; background-color: #ffe0e0; }
         .realtime-calc { margin-top: 5px; }
 
-
         /* Segment Input Area */
         .segment-input-container { margin-bottom: 10px; padding: 8px; border: 1px dashed #ccc; border-radius: 3px; background-color: #fdfdfd; }
         .segment-type-display { font-style: italic; font-size: 0.8em; color: #555; margin-bottom: 4px; display: block; }
         .arc-inputs { display: block; } .line-inputs { display: block; }
         .hidden { display: none !important; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
 
-        /* Instructions */
-        #instructions ul { padding-left: 18px; margin-top: 4px; margin-bottom: 4px; font-size: 0.85em; color: #333; }
-        #instructions li { margin-bottom: 4px; }
-        #instructions strong { color: #004085; }
 
-        /* Settings Layout */
-        #settings-section > div { margin-bottom: 8px; }
-        #settings-section > div > label:first-child { font-weight: bold; margin-right: 8px; min-width: 100px; display: inline-block; }
-        #settings-section > div > label > input[type="radio"] { margin-right: 2px; vertical-align: middle; }
-        #settings-section label[for="revolutionSlider"] { font-weight: bold; min-width: 100px; display: inline-block; }
+        /* --- Shared Controls (Buttons, Inputs etc) --- */
+        button { padding: 6px 12px; margin-bottom: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease; font-size: 0.9em; }
+        button:not(.btn-stepper):not(.tab-button):hover { background-color: #0056b3; }
+        .removeSegmentBtn { background-color: #dc3545; float: right; margin-left: 10px; padding: 3px 6px; font-size: 0.75em; }
+        .removeSegmentBtn:hover { background-color: #c82333; }
+        label { margin-right: 5px; display: inline-block; margin-bottom: 4px; font-size: 0.9em;}
+        input[type="number"] { padding: 4px 3px; margin: 1px 2px 1px 0; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; text-align: right; font-size: 0.9em; width: 55px; }
+        input[type="range"] { vertical-align: middle; }
 
-        /* Responsive Adjustments */
-        @media (max-width: 768px) { #ui-controls { max-height: 55vh; } .ui-section { flex-basis: 45%; min-width: 250px; } #instructions { flex-basis: 95%;} }
-        @media (max-width: 600px) { .ui-section { flex-basis: 95%; } #ui-controls h1 { font-size: 1.1em;} #ui-controls h2 { font-size: 0.95em;} .calc-label-compact { font-size: 0.8em; } }
-        @media (max-width: 450px) { .input-stepper { margin-right: 2px;} .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: unset; margin-right: 3px;} }
-        @media (max-width: 400px) { #ui-controls { padding: 5px; gap: 5px; max-height: 60vh;} .ui-section, #instructions { padding: 8px; } input[type="range"] { width: 120px; } button { padding: 5px 10px; font-size: 0.85em;} .removeSegmentBtn { padding: 2px 5px; font-size: 0.7em; } #calculations-section span:not(.calc-label-compact) { font-size: 0.85em; min-width: 35px; padding: 1px 3px;} .calc-row { margin-bottom: 2px; } .calc-item { margin-right: 3px;} }
+        /* Stepper Styles */
+        .input-stepper { display: inline-flex; align-items: center; margin-right: 5px; }
+        .input-stepper input[type="number"] { margin: 1px 0 1px 0; border-top-right-radius: 0; border-bottom-right-radius: 0; width: 45px; }
+        .btn-stepper { font-family: monospace; font-weight: bold; font-size: 0.9em; line-height: 1; padding: 3px 4px; min-width: 18px; height: calc(1.8em + 2px); box-sizing: border-box; border: 1px solid #ccc; border-left: none; background-color: #f8f8f8; color: #555; cursor: pointer; margin: 0; display: flex; justify-content: center; align-items: center; }
+        .btn-stepper:hover { background-color: #eee; color: #000; } .btn-stepper:active { background-color: #ddd; }
+        .btn-stepper.btn-inc { border-radius: 0; } .btn-stepper.btn-dec { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+
+        /* Point/Vector/Angle Groups */
+        .point-input-group, .vector-input-group, .angle-input-group { display: flex; align-items: center; flex-wrap: wrap; gap: 0 5px; margin-bottom: 4px; }
+        .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: 45px; font-weight: bold; margin-right: 5px; text-align: right; font-size: 0.9em; }
+        .vector-input-group > span { min-width: 55px; } .angle-input-group > span { min-width: 80px; }
+        .angle-input-group input[type="number"] { width: 60px;}
+
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 600px) {
+            #ui-controls { max-height: 60vh; }
+            #settings-section { gap: 5px; }
+            .tab-button { padding: 5px 8px; font-size: 0.8em;}
+        }
+         @media (max-width: 480px) {
+             #ui-controls { max-height: 65vh; }
+             #settings-section { padding: 6px 10px; }
+             #revolutionSlider { min-width: 80px; }
+             #angleValue { width: 30px; }
+             .tab-button { padding: 4px 6px; font-size: 0.75em;}
+             #tab-buttons { padding: 4px 5px; }
+             #tab-content { padding: 5px 8px; }
+             .input-stepper { margin-right: 2px;}
+             .point-input-group > span, .vector-input-group > span, .angle-input-group > span { min-width: unset; margin-right: 3px;}
+         }
+         @media (max-width: 400px) {
+            #settings-section { flex-direction: column; align-items: stretch; } /* Stack settings vertically */
+            #revolutionSlider { width: auto; flex-grow: 0;} /* Let label/value dictate width */
+            .calc-row { flex-direction: column; align-items: flex-start; margin-bottom: 5px;}
+            .calc-item { margin-right: 0; width: 100%; justify-content: space-between;}
+            .calc-item-wide { order: -1; } /* Put Centroid first maybe */
+            #centroidCoords { text-align: right; }
+         }
     </style>
 
     <script type="importmap">
@@ -106,56 +240,94 @@
 <body>
     <div id="container">
          <div id="ui-controls">
-            <h1>Pappus's Theorem II</h1>
-            <p>Surface Area = Total Length (L) × Centroid Path Distance (d)</p>
 
-            <!-- Add Element Controls -->
-            <div id="add-controls">
-                 <label for="segmentTypeSelector">Add:</label>
-                 <select id="segmentTypeSelector">
-                     <option value="line" selected>Line Segment</option>
-                     <option value="arc">Circular Arc</option>
+            <!-- Settings Section (Single Row) -->
+            <div id="settings-section">
+                 <select id="axisSelector" name="axis">
+                     <option value="x">Axis: X</option>
+                     <option value="y" selected>Axis: Y</option>
+                     <option value="z">Axis: Z</option>
                  </select>
-                 <button id="addSegmentBtn">Add Element</button>
-
-                 <span style="margin-left: auto; margin-right: 5px;">or</span>
-
-                 <label for="exampleSelector">Load Example:</label>
-                 <select id="exampleSelector">
-                     <option value="" selected>Select Example...</option>
-                     <option value="fig711">Figure 7.1.1</option>
-                     <option value="fig712">Figure 7.1.2</option>
-                     <option value="fig713">Figure 7.1.3</option>
-                     <option value="fig714">Figure 7.1.4</option>
-                     <option value="fig715">Figure 7.1.5</option>
-                     <option value="fig716">Figure 7.1.6</option>
-                 </select>
+                 <label class="settings-slider-label" for="revolutionSlider">Angle:</label>
+                 <input type="range" id="revolutionSlider" min="0" max="360" value="0" step="1"> <!-- Default value 0 -->
+                 <span id="angleValue">0</span>° <!-- Default value 0 -->
             </div>
 
-            <!-- Sections -->
-            <div id="segments-section" class="ui-section"><h2>Elements</h2><div id="segmentsContainer"></div></div>
-            <div id="settings-section" class="ui-section"><h2>Settings</h2><div><label>Axis of Rotation:</label><label><input type="radio" name="axis" value="x"> X</label><label><input type="radio" name="axis" value="y" checked> Y</label><label><input type="radio" name="axis" value="z"> Z</label></div><div><label for="revolutionSlider">Revolution Angle:</label><input type="range" id="revolutionSlider" min="0" max="360" value="360" step="1"><span id="angleValue">360</span>°</div></div>
+             <!-- Tab Buttons -->
+             <div id="tab-buttons">
+                 <button class="tab-button active" data-target="panel-elements">Elements</button>
+                 <button class="tab-button" data-target="panel-add">Add/Load</button>
+                 <button class="tab-button" data-target="panel-calculations">Calculations</button>
+                 <button class="tab-button" data-target="panel-instructions">Instructions</button>
+             </div>
 
-            <!-- Compact Calculations Section -->
-            <div id="calculations-section" class="ui-section">
-                <h2>Calculations</h2>
-                <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">L:</span> <span id="totalLength">0.000</span> </div> <div class="calc-item calc-item-wide"> <span class="calc-label-compact">C:</span> <span id="centroidCoords">N/A</span> </div> </div>
-                <div class="calc-row realtime-calc"> <div class="calc-item"> <span class="calc-label-compact">S (partial):</span> <span id="partialSurfaceArea">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">R (S/2πL):</span> <span id="calculatedDistanceR">0.000</span> </div> </div>
-                <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">R (full):</span> <span id="centroidDistanceR">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">d (2πR_full):</span> <span id="centroidDistanceD">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">Area (L*d):</span> <span id="surfaceArea">0.000</span> </div> </div>
-            </div>
+             <!-- Tab Content Area (Collapsible) -->
+             <div id="tab-content"> <!-- Initially shown (no .collapsed class) -->
+                 <!-- Panel 1: Elements -->
+                 <div id="panel-elements" class="tab-panel active">
+                     <div id="segmentsContainer"></div>
+                 </div>
 
-            <div id="instructions" class="ui-section"><p><strong>Instructions:</strong></p><ul><li>Select 'Line Segment' or 'Circular Arc' and click 'Add Element', or load an example.</li><li>For Lines: define P1, P2.</li><li>For Arcs: define Center, Radius, Normal (plane orientation), Start Angle (0° = reference dir in plane), and Sweep Angle (extent).</li><li>Use +/- buttons or type to modify coordinates/parameters.</li><li>Remove elements using the 'Remove' button.</li><li>Use mouse (Left-drag: rotate, Right-drag: pan, Wheel: zoom) to view.</li><li>Select rotation axis (X, Y, or Z). Standard axes shown (X:Red, Y:Green, Z:Blue).</li><li>Adjust the slider to see partial revolution and real-time calculation updates.</li><li>Calculations apply to the entire shape (all lines and arcs combined).</li></ul></div>
+                 <!-- Panel 2: Add/Load -->
+                 <div id="panel-add" class="tab-panel">
+                     <div id="add-controls">
+                          <label for="segmentTypeSelector">Add:</label>
+                          <select id="segmentTypeSelector">
+                              <option value="line" selected>Line Segment</option>
+                              <option value="arc">Circular Arc</option>
+                          </select>
+                          <button id="addSegmentBtn">Add Element</button>
+                          <span style="margin: 0 10px;">or</span>
+                          <label for="exampleSelector">Load Example:</label>
+                          <select id="exampleSelector">
+                              <option value="" selected>Select Example...</option>
+                              <option value="fig711">Fig 7.1.1</option>
+                              <option value="fig712">Fig 7.1.2</option>
+                              <option value="fig713">Fig 7.1.3</option>
+                              <option value="fig714">Fig 7.1.4</option>
+                              <option value="fig715">Fig 7.1.5</option>
+                              <option value="fig716">Fig 7.1.6</option>
+                          </select>
+                     </div>
+                 </div>
+
+                 <!-- Panel 3: Calculations -->
+                 <div id="panel-calculations" class="tab-panel">
+                     <div id="calculations-section">
+                         <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">L:</span> <span id="totalLength">0.000</span> </div> <div class="calc-item calc-item-wide"> <span class="calc-label-compact">C:</span> <span id="centroidCoords">N/A</span> </div> </div>
+                         <div class="calc-row realtime-calc"> <div class="calc-item"> <span class="calc-label-compact">S (partial):</span> <span id="partialSurfaceArea">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">R (S/θL):</span> <span id="calculatedDistanceR">N/A</span> </div> </div>
+                         <div class="calc-row"> <div class="calc-item"> <span class="calc-label-compact">R (full):</span> <span id="centroidDistanceR">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">d (2πR):</span> <span id="centroidDistanceD">0.000</span> </div> <div class="calc-item"> <span class="calc-label-compact">Area (L*d):</span> <span id="surfaceArea">0.000</span> </div> </div>
+                     </div>
+                 </div>
+
+                 <!-- Panel 4: Instructions -->
+                 <div id="panel-instructions" class="tab-panel">
+                      <div id="instructions">
+                         <p><strong>Instructions:</strong></p>
+                         <ul>
+                             <li>Use tabs (Elements, Add/Load, Calc, Instr) below settings.</li>
+                             <li>Click the *active* tab button again to collapse/expand this panel.</li>
+                             <li>Add elements or load examples via <strong>Add/Load</strong>.</li>
+                             <li>View/modify elements in <strong>Elements</strong>.</li>
+                             <li>Use +/- buttons or type to modify parameters.</li>
+                             <li>Remove elements using the 'Remove' button.</li>
+                             <li>Use mouse (L-drag: rotate, R-drag: pan, Wheel: zoom) to view 3D model.</li>
+                             <li>Select rotation axis and angle in the settings row at the top.</li>
+                             <li>View results in <strong>Calculations</strong>.</li>
+                         </ul>
+                      </div>
+                 </div>
+             </div>
+
         </div>
         <div id="visualization-container"><canvas id="visualizationCanvas"></canvas></div>
     </div>
 
-    <!-- Element Template -->
+    <!-- Element Template (Remains the same) -->
     <template id="segmentTemplate">
         <div class="segment-input-container" data-type="line">
             <button class="removeSegmentBtn">Remove</button>
             <span class="segment-type-display">Line Segment</span>
-
-            <!-- Inputs for Line -->
             <div class="line-inputs">
                 <div class="point-input-group">
                     <span>P1:</span>
@@ -170,16 +342,14 @@
                     <div class="input-stepper"><input type="number" class="coord p2z" value="0" step="0.1" title="P2 Z"><button class="btn-stepper btn-inc" data-target=".p2z">+</button><button class="btn-stepper btn-dec" data-target=".p2z">-</button></div>
                 </div>
             </div>
-
-            <!-- Inputs for Arc -->
             <div class="arc-inputs hidden">
                  <div class="point-input-group">
                      <span>Center:</span>
                      <div class="input-stepper"><input type="number" class="coord cx" value="0" step="0.1" title="Center X"><button class="btn-stepper btn-inc" data-target=".cx">+</button><button class="btn-stepper btn-dec" data-target=".cx">-</button></div>
                      <div class="input-stepper"><input type="number" class="coord cy" value="0" step="0.1" title="Center Y"><button class="btn-stepper btn-inc" data-target=".cy">+</button><button class="btn-stepper btn-dec" data-target=".cy">-</button></div>
-                     <div class="input-stepper"><input type="number" class="coord cz" value="0" step="0.1" title="Center Z"><button class="btn-stepper btn-inc" data-target=".cz">+</button><button class="btn-stepper btn-dec" data-target=".cz">-</button></div>
+                    <div class="input-stepper"><input type="number" class="coord cz" value="0" step="0.1" title="Center Z"><button class="btn-stepper btn-inc" data-target=".cz">+</button><button class="btn-stepper btn-dec" data-target=".cz">-</button></div>
                  </div>
-                 <div class="vector-input-group"> <!-- Group for Radius -->
+                 <div class="vector-input-group">
                      <span>Radius:</span>
                      <div class="input-stepper"><input type="number" class="coord radius" value="1" step="0.1" min="0.01" title="Radius (must be > 0)"><button class="btn-stepper btn-inc" data-target=".radius">+</button><button class="btn-stepper btn-dec" data-target=".radius">-</button></div>
                  </div>
@@ -198,7 +368,6 @@
                     <div class="input-stepper"><input type="number" class="coord sweepAngle" value="90" step="5" min="1" max="359" title="Sweep Angle (degrees, 1-359)"><button class="btn-stepper btn-inc" data-target=".sweepAngle" data-step="5">+</button><button class="btn-stepper btn-dec" data-target=".sweepAngle" data-step="5">-</button></div>
                 </div>
             </div>
-
         </div>
     </template>
 
@@ -212,7 +381,7 @@
         let segmentLines = [];
         let surfaceMeshes = [];
         let axisOfRotation = 'y';
-        let revolutionAngle = 360;
+        let revolutionAngle = 0; // Default angle 0
         let axisHelper, centroidPathVisual;
         let axisLabels = [];
         let sharedSurfaceMaterial;
@@ -233,7 +402,7 @@
         const segmentTemplate = document.getElementById('segmentTemplate');
         const revolutionSlider = document.getElementById('revolutionSlider');
         const angleValueSpan = document.getElementById('angleValue');
-        const axisRadios = document.querySelectorAll('input[name="axis"]');
+        const axisSelector = document.getElementById('axisSelector');
         const totalLengthSpan = document.getElementById('totalLength');
         const centroidCoordsSpan = document.getElementById('centroidCoords');
         const centroidDistanceRSpan = document.getElementById('centroidDistanceR');
@@ -241,6 +410,12 @@
         const surfaceAreaSpan = document.getElementById('surfaceArea');
         const partialSurfaceAreaSpan = document.getElementById('partialSurfaceArea');
         const calculatedDistanceRSpan = document.getElementById('calculatedDistanceR');
+        // Tab Elements
+        const tabButtonsContainer = document.getElementById('tab-buttons');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContent = document.getElementById('tab-content'); // Direct ref to content area
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
 
         // --- Rotation Axis Vectors ---
         const AXIS_VECTORS = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
@@ -252,30 +427,31 @@
                  { type: 'line', p1x: 0, p1y: 2, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
                  { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 0, p2y: 0, p2z: 0 },
              ],
-            fig712: [ { type: 'arc', cx: 0, cy: 0, cz: 0, radius: 2, nx: 0, ny: 0, nz: 1, startAngle: 0, sweepAngle: 90 } ],
-            fig713: [
-                { type: 'line', p1x: 0, p1y: 1, p1z: 2, p2x: 0, p2y: 2, p2z: 2 }, // Line parallel to Y in YZ plane
-                { type: 'arc', cx: 0, cy: 0, cz: 2, radius: 2, nx: 1, ny: 0, nz: 0, startAngle: 90, sweepAngle: 90 } // Arc in YZ plane (Normal X) connecting to P2
-            ],
-             fig714: [
-                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
-                 { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
-                 { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
+            fig712: [
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 2, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 2, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
+                 { type: 'line', p1x: 2, p1y: 0, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
              ],
+            fig713: [
+                 { type: 'line', p1x: 0, p1y: 0, p1z: 0, p2x: 1, p2y: 2, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 2, p1z: 0, p2x: 1, p2y: 0, p2z: 0 },
+                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 0, p2y: 0, p2z: 0 },
+             ],
+            fig714: [ 
+			     { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: -1, p2z: 0 },
+				 { type: 'arc', cx: 2, cy: 0, cz: 0, radius: 1, nx: 0, ny: 0, nz: 2, startAngle: 180, sweepAngle: 180 }
+				 ],
             fig715: [
                  { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
                  { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
                  { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
              ],
-            fig716: [
-                 { type: 'line', p1x: 1, p1y: 0, p1z: 0, p2x: 1, p2y: 1, p2z: 0 },
-                 { type: 'line', p1x: 1, p1y: 1, p1z: 0, p2x: 2, p2y: 1, p2z: 0 },
-                 { type: 'line', p1x: 2, p1y: 1, p1z: 0, p2x: 2, p2y: 0, p2z: 0 },
-             ]
+
         };
 
         // --- Initialization ---
         function init() {
+            // Scene, Camera, Renderer, Lights, Controls setup (same as before)
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xcccccc);
             const vizContainer = document.getElementById('visualization-container');
@@ -289,14 +465,8 @@
             const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4); directionalLight2.position.set(-5, -5, -5); scene.add(directionalLight2);
             controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.05; controls.minDistance = 1; controls.maxDistance = 100; controls.maxPolarAngle = Math.PI;
 
-            // Load Environment Map
-            const loader = new THREE.CubeTextureLoader();
-            const texturePath = './textures/cube/bridge2/'; // Example path - !!! CHANGE IF NEEDED !!!
-            const textureFiles = [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ];
-            try { const textureCube = loader.setPath(texturePath).load( textureFiles, () => { console.log("Env map loaded."); }, undefined, (error) => { console.error(`Error loading env map from ${texturePath}:`, error); /* alert(`Could not load env map textures from ${texturePath}.`); */ }); scene.environment = textureCube; } catch (e) { console.error("Failed env map load setup:", e); /* alert("Error setting up env map loader."); */ }
-
-            // Create Shared Surface Material
-            sharedSurfaceMaterial = new THREE.MeshStandardMaterial({ color: SURFACE_COLOR, transparent: true, opacity: 0.65, side: THREE.DoubleSide, metalness: 0.2, roughness: 0.3, envMapIntensity: 1.0, refractionRatio: 0.95, });
+            // Shared Surface Material
+            sharedSurfaceMaterial = new THREE.MeshStandardMaterial({ color: SURFACE_COLOR, transparent: true, opacity: 0.65, side: THREE.DoubleSide, metalness: 0.2, roughness: 0.3, envMapIntensity: 0.8 });
 
             // Helpers & Labels
             axisHelper = new THREE.AxesHelper(5); scene.add(axisHelper); createAxisLabels();
@@ -308,18 +478,53 @@
             segmentsContainer.addEventListener('click', handleStepperClick);
             exampleSelector.addEventListener('change', loadPredefinedExample);
             revolutionSlider.addEventListener('input', handleRevolutionSlider);
-            axisRadios.forEach(radio => radio.addEventListener('change', handleAxisChange));
+            axisSelector.addEventListener('change', handleAxisChange);
             window.addEventListener('resize', resizeRenderer);
+            // Tab switching/collapsing listener
+            tabButtonsContainer.addEventListener('click', handleTabClick);
 
             // Initial Setup
-            loadPredefinedExample('fig7.1.1'); // Load Example 1 initially
+            loadPredefinedExample('fig711'); // Load Example 1
+            // updateVisualizationAndCalculations(); // This is called within loadPredefinedExample
             animate();
         }
 
-        // --- resizeRenderer ---
+        // --- resizeRenderer --- (same)
         function resizeRenderer() { const vizContainer = document.getElementById('visualization-container'); const width = vizContainer.clientWidth; const height = vizContainer.clientHeight; if (width === 0 || height === 0) return; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); }
 
-        // --- UI Management ---
+        // --- Tab UI Management (with Collapse/Expand) ---
+         function handleTabClick(event) {
+            const clickedButton = event.target.closest('.tab-button');
+            if (!clickedButton) return; // Click was not on a button
+
+            const targetPanelId = clickedButton.dataset.target;
+            if (!targetPanelId) return;
+
+            const isAlreadyActive = clickedButton.classList.contains('active');
+            const isContentCollapsed = tabContent.classList.contains('collapsed');
+
+            if (isAlreadyActive) {
+                // Clicked the active button: toggle content visibility
+                tabContent.classList.toggle('collapsed');
+            } else {
+                // Clicked an inactive button:
+                // 1. Ensure content is visible
+                if (isContentCollapsed) {
+                    tabContent.classList.remove('collapsed');
+                }
+                // 2. Update active button
+                tabButtons.forEach(button => button.classList.remove('active'));
+                clickedButton.classList.add('active');
+                // 3. Update active panel
+                tabPanels.forEach(panel => {
+                    panel.classList.toggle('active', panel.id === targetPanelId);
+                });
+            }
+         }
+
+        // --- Segment UI Management ---
+        // addSegmentUI, loadPredefinedExample, handleSegmentInputChange,
+        // handleRemoveSegmentClick, handleStepperClick remain the same
          function addSegmentUI(update = true, data = null) {
             const selectedType = data ? data.type : segmentTypeSelector.value;
             const templateContent = segmentTemplate.content.cloneNode(true);
@@ -336,18 +541,48 @@
         }
         function loadPredefinedExample(eventOrKey) {
              let selectedKey = ''; if (typeof eventOrKey === 'string') { selectedKey = eventOrKey; exampleSelector.value = selectedKey; } else { selectedKey = eventOrKey.target.value; }
-            if (!selectedKey || !predefinedExamples[selectedKey]) { if (selectedKey === "") { segmentsContainer.innerHTML = ''; updateVisualizationAndCalculations(); } return; }
-            const exampleData = predefinedExamples[selectedKey]; segmentsContainer.innerHTML = ''; exampleData.forEach(itemData => { addSegmentUI(false, itemData); }); updateVisualizationAndCalculations();
+            if (!selectedKey || !predefinedExamples[selectedKey]) { if (selectedKey === "") { segmentsContainer.innerHTML = ''; } /* Don't update viz yet if clearing */ }
+            else { const exampleData = predefinedExamples[selectedKey]; segmentsContainer.innerHTML = ''; exampleData.forEach(itemData => { addSegmentUI(false, itemData); }); }
+
+            // Always reset angle to 0 when loading example or clearing
+            revolutionAngle = 0;
+            revolutionSlider.value = 0;
+            angleValueSpan.textContent = '0';
+
+            updateVisualizationAndCalculations(); // Update viz *after* potential clearing or loading
+
+            // Ensure content is shown and switch to elements tab
+            if (tabContent.classList.contains('collapsed')) {
+                 tabContent.classList.remove('collapsed');
+            }
+             document.querySelector('.tab-button[data-target="panel-elements"]').click(); // Activate elements tab
+
             // exampleSelector.value = ""; // Optional: Reset dropdown
         }
         function handleSegmentInputChange(event) { if (event.target.classList.contains('coord')) { updateVisualizationAndCalculations(); } }
         function handleRemoveSegmentClick(event) { if (event.target.classList.contains('removeSegmentBtn')) { event.target.closest('.segment-input-container').remove(); updateVisualizationAndCalculations(); } }
         function handleStepperClick(event) { const target = event.target; if (!target.classList.contains('btn-stepper')) return; event.preventDefault(); const isIncrement = target.classList.contains('btn-inc'); const inputSelector = target.dataset.target; if (!inputSelector) return; const segmentContainer = target.closest('.segment-input-container'); if (!segmentContainer) return; const inputElement = segmentContainer.querySelector(inputSelector); if (!inputElement) return; try { const stepAttr = target.dataset.step; const step = stepAttr ? parseFloat(stepAttr) : 0.1; let currentValue = parseFloat(inputElement.value) || 0; let newValue = isIncrement ? currentValue + step : currentValue - step; const min = inputElement.hasAttribute('min') ? parseFloat(inputElement.min) : null; const max = inputElement.hasAttribute('max') ? parseFloat(inputElement.max) : null; if (min !== null) newValue = Math.max(min, newValue); if (max !== null) newValue = Math.min(max, newValue); const precision = step === 5 ? 0 : 4; newValue = parseFloat(newValue.toFixed(precision)); inputElement.value = newValue; inputElement.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) { console.error("Error handling stepper click:", e); } }
-        function handleRevolutionSlider(event) { revolutionAngle = parseFloat(event.target.value); angleValueSpan.textContent = revolutionAngle; clearSurfaceMeshes(); drawSurfaceOfRevolution_Manual_PerSegment(); updateRealTimeCalculations(); if (centroidPathVisual) { centroidPathVisual.visible = (revolutionAngle === 360); } }
-        function handleAxisChange(event) { axisOfRotation = event.target.value; updateVisualizationAndCalculations(); }
 
-        // --- Data Parsing ---
-        function parseSegmentsFromUI() {
+
+        // --- Settings Handlers ---
+        function handleRevolutionSlider(event) {
+             revolutionAngle = parseFloat(event.target.value);
+             angleValueSpan.textContent = revolutionAngle;
+             clearSurfaceMeshes();
+             drawSurfaceOfRevolution_Manual_PerSegment(); // Update surface mesh
+             updateRealTimeCalculations(); // Update S_partial and derived R
+             if (centroidPathVisual) {
+                 centroidPathVisual.visible = (revolutionAngle === 360); // Show centroid path only on full revolution
+             }
+         }
+        function handleAxisChange() {
+            axisOfRotation = axisSelector.value;
+            updateVisualizationAndCalculations(); // Recalculate everything for new axis
+        }
+
+
+        // --- Data Parsing --- (same)
+         function parseSegmentsFromUI() {
             segmentsData = []; const segmentDivs = segmentsContainer.querySelectorAll('.segment-input-container');
             segmentDivs.forEach((div, index) => {
                 const type = div.dataset.type || 'line'; let elementData = { type, length: 0, centroid: new THREE.Vector3(), p1: new THREE.Vector3(), p2: new THREE.Vector3() }; let isValid = false; div.style.borderColor = '#ccc';
@@ -368,49 +603,130 @@
         }
 
         // --- Calculations ---
+        // calculatePolylineProperties, getDistanceToAxis, calculatePappusValues (same)
         function calculatePolylineProperties() { let totalLength = 0; let weightedCentroidSum = new THREE.Vector3(0, 0, 0); segmentsData.forEach(seg => { if (seg.length > 0) { totalLength += seg.length; weightedCentroidSum.addScaledVector(seg.centroid, seg.length); } }); const polylineCentroid = totalLength > 0 ? weightedCentroidSum.divideScalar(totalLength) : new THREE.Vector3(0, 0, 0); return { totalLength, polylineCentroid }; }
         function getDistanceToAxis(point, axis) { switch (axis) { case 'x': return Math.sqrt(point.y * point.y + point.z * point.z); case 'y': return Math.sqrt(point.x * point.x + point.z * point.z); case 'z': return Math.sqrt(point.x * point.x + point.y * point.y); default: return 0; } }
         function calculatePappusValues(totalLength, polylineCentroid, axis) { if (totalLength === 0) return { R: 0, d: 0, area: 0 }; const R = getDistanceToAxis(polylineCentroid, axis); const d = 2 * Math.PI * R; const area = totalLength * d; return { R, d, area }; }
-        function updateRealTimeCalculations() { const angleRad = THREE.MathUtils.degToRad(revolutionAngle); const S_partial = currentTotalLength * currentCentroidDistanceR * angleRad; let R_calc = 0; const denominator = 2 * Math.PI * currentTotalLength; if (Math.abs(denominator) > EPSILON) { R_calc = S_partial / denominator; } partialSurfaceAreaSpan.textContent = S_partial.toFixed(3); calculatedDistanceRSpan.textContent = R_calc.toFixed(3); }
+        // updateRealTimeCalculations - Handle zero angle for R_calc
+        function updateRealTimeCalculations() {
+             const angleRad = THREE.MathUtils.degToRad(revolutionAngle);
+             const S_partial = currentTotalLength * currentCentroidDistanceR * angleRad;
+             let R_calc_Text = "N/A"; // Default for zero angle or length
+
+             // Calculate R from S_partial / (L * angle) only if angle and length > 0
+             const denominator = currentTotalLength * angleRad;
+             if (Math.abs(denominator) > EPSILON) {
+                 const R_calc = S_partial / denominator;
+                 R_calc_Text = R_calc.toFixed(3);
+             } else if (Math.abs(angleRad) < EPSILON && currentTotalLength > 0) {
+                 // If angle is effectively zero, derived R is technically the centroid distance
+                 // R_calc_Text = currentCentroidDistanceR.toFixed(3); // Alternative: show full R
+             }
+
+
+             partialSurfaceAreaSpan.textContent = S_partial.toFixed(3);
+             calculatedDistanceRSpan.textContent = R_calc_Text; // Display calculated R or N/A
+         }
 
         // --- 3D Visualization ---
+        // clearSurfaceMeshes, clearCentroidPathVisual, clearSceneGeometry, drawSegments,
+        // createAxisLabel, createAxisLabels, drawSurfaceOfRevolution_Manual_PerSegment,
+        // drawCentroidPathVisual remain the same
         function clearSurfaceMeshes() { surfaceMeshes.forEach(mesh => { scene.remove(mesh); if (mesh.geometry) mesh.geometry.dispose(); }); surfaceMeshes = []; }
         function clearCentroidPathVisual() { if (centroidPathVisual) { scene.remove(centroidPathVisual); if (centroidPathVisual.geometry) centroidPathVisual.geometry.dispose(); if (centroidPathVisual.material) centroidPathVisual.material.dispose(); centroidPathVisual = null; } }
         function clearSceneGeometry() { segmentLines.forEach(line => { scene.remove(line); if(line.geometry) line.geometry.dispose(); if(line.material) line.material.dispose(); }); segmentLines = []; clearSurfaceMeshes(); clearCentroidPathVisual(); }
-
         function drawSegments() {
             const lineMaterial = new THREE.LineBasicMaterial({ color: SEGMENT_COLOR, linewidth: 2 }); const arcMaterial = new THREE.LineBasicMaterial({ color: ARC_COLOR, linewidth: 2 });
             segmentsData.forEach(seg => { let line = null; if (seg.type === 'line') { const geometry = new THREE.BufferGeometry().setFromPoints([seg.p1, seg.p2]); line = new THREE.Line(geometry, lineMaterial); } else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngleRad > EPSILON) { let a = (Math.abs(seg.normal.x) < 0.9) ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const u = new THREE.Vector3().crossVectors(seg.normal, a).normalize(); const v = new THREE.Vector3().crossVectors(seg.normal, u).normalize(); const arcPoints = []; for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = seg.startAngleRad + (i / ARC_SUBDIVISIONS) * seg.sweepAngleRad; const point = seg.center.clone().addScaledVector(u, seg.radius * Math.cos(angle)).addScaledVector(v, seg.radius * Math.sin(angle)); arcPoints.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(arcPoints); line = new THREE.Line(geometry, arcMaterial); } if (line) { scene.add(line); segmentLines.push(line); } });
         }
-
         function createAxisLabel(text, position, color) { const canvas = document.createElement('canvas'); const context = canvas.getContext('2d'); const fontSize = 48; context.font = `Bold ${fontSize}px Arial`; const metrics = context.measureText(text); const textWidth = metrics.width; canvas.width = textWidth + 20; canvas.height = fontSize + 10; context.font = `Bold ${fontSize}px Arial`; context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, canvas.width / 2, canvas.height / 2); const texture = new THREE.CanvasTexture(canvas); texture.needsUpdate = true; const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }); const sprite = new THREE.Sprite(material); const aspect = canvas.width / canvas.height; sprite.scale.set(AXIS_LABEL_SIZE * aspect * 0.5, AXIS_LABEL_SIZE * 0.5, 1); sprite.position.copy(position); sprite.renderOrder = 2; scene.add(sprite); return sprite; }
         function createAxisLabels() { axisLabels.forEach(label => scene.remove(label)); axisLabels = []; axisLabels.push(createAxisLabel('X', new THREE.Vector3(AXIS_LABEL_OFFSET, 0, 0), '#FF0000')); axisLabels.push(createAxisLabel('Y', new THREE.Vector3(0, AXIS_LABEL_OFFSET, 0), '#00CC00')); axisLabels.push(createAxisLabel('Z', new THREE.Vector3(0, 0, AXIS_LABEL_OFFSET), '#0000FF')); }
-
         function drawSurfaceOfRevolution_Manual_PerSegment() {
-            clearSurfaceMeshes(); if (segmentsData.length === 0 || revolutionAngle <= 0 || !sharedSurfaceMaterial) return;
-            const angleRad = THREE.MathUtils.degToRad(revolutionAngle); const rotationAxisVec = AXIS_VECTORS[axisOfRotation]; const numSteps = Math.max(1, Math.ceil(RADIAL_SEGMENTS * (revolutionAngle / 360))); const deltaAngle = angleRad / numSteps; const q = new THREE.Quaternion();
+            clearSurfaceMeshes();
+            // Only draw if angle is positive
+            if (segmentsData.length === 0 || revolutionAngle <= EPSILON || !sharedSurfaceMaterial) return;
+
+            const angleRad = THREE.MathUtils.degToRad(revolutionAngle); const rotationAxisVec = AXIS_VECTORS[axisOfRotation];
+            // Adjust numSteps based on angle, ensure at least 1 step if angle > 0
+            const numSteps = Math.max(1, Math.ceil(RADIAL_SEGMENTS * (revolutionAngle / 360)));
+            const deltaAngle = angleRad / numSteps; const q = new THREE.Quaternion();
+
             segmentsData.forEach(seg => {
-                const geometry = new THREE.BufferGeometry(); const vertices = []; const indices = []; let indexOffset = 0; const profilePoints = [];
+                const geometry = new THREE.BufferGeometry(); const vertices = []; const indices = [];
+                const profilePoints = [];
                 if (seg.type === 'line') { profilePoints.push(seg.p1.clone()); profilePoints.push(seg.p2.clone()); }
                 else if (seg.type === 'arc' && seg.radius > EPSILON && seg.sweepAngleRad > EPSILON) { let a = (Math.abs(seg.normal.x) < 0.9) ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const u = new THREE.Vector3().crossVectors(seg.normal, a).normalize(); const v = new THREE.Vector3().crossVectors(seg.normal, u).normalize(); for (let i = 0; i <= ARC_SUBDIVISIONS; i++) { const angle = seg.startAngleRad + (i / ARC_SUBDIVISIONS) * seg.sweepAngleRad; const point = seg.center.clone().addScaledVector(u, seg.radius * Math.cos(angle)).addScaledVector(v, seg.radius * Math.sin(angle)); profilePoints.push(point); } }
                 if (profilePoints.length < 2) return;
-                for (let i = 0; i < numSteps; i++) { const currentAngle = i * deltaAngle; const nextAngle = (i + 1) * deltaAngle; const pointsCurrent = profilePoints.map(p => p.clone().applyQuaternion(q.setFromAxisAngle(rotationAxisVec, currentAngle))); const pointsNext = profilePoints.map(p => p.clone().applyQuaternion(q.setFromAxisAngle(rotationAxisVec, nextAngle))); for (let j = 0; j < profilePoints.length - 1; j++) { const pA_curr = pointsCurrent[j]; const pB_curr = pointsCurrent[j + 1]; const pA_next = pointsNext[j]; const pB_next = pointsNext[j + 1]; vertices.push(pA_curr.x, pA_curr.y, pA_curr.z); vertices.push(pB_curr.x, pB_curr.y, pB_curr.z); vertices.push(pA_next.x, pA_next.y, pA_next.z); vertices.push(pB_next.x, pB_next.y, pB_next.z); indices.push(indexOffset + 0, indexOffset + 1, indexOffset + 2); indices.push(indexOffset + 1, indexOffset + 3, indexOffset + 2); indexOffset += 4; } }
-                if (vertices.length === 0) return; geometry.setIndex(indices); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.computeVertexNormals(); const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial); scene.add(segmentSurfaceMesh); surfaceMeshes.push(segmentSurfaceMesh); });
-        }
 
+                // Generate vertices for each step of the revolution
+                for (let i = 0; i <= numSteps; i++) {
+                     const currentAngle = i * deltaAngle; // No need to clamp, goes from 0 to angleRad
+                     const pointsCurrent = profilePoints.map(p => p.clone().applyQuaternion(q.setFromAxisAngle(rotationAxisVec, currentAngle)));
+                     vertices.push(...pointsCurrent.flatMap(p => [p.x, p.y, p.z]));
+                }
+
+                // Generate indices for the faces
+                const profileLength = profilePoints.length;
+                for (let i = 0; i < numSteps; i++) { // Iterate through steps to form faces
+                    for (let j = 0; j < profileLength - 1; j++) { // Iterate through points in profile
+                        const idxA_curr = i * profileLength + j; const idxB_curr = i * profileLength + j + 1;
+                        const idxA_next = (i + 1) * profileLength + j; const idxB_next = (i + 1) * profileLength + j + 1;
+                        indices.push(idxA_curr, idxB_curr, idxA_next); // Triangle 1
+                        indices.push(idxB_curr, idxB_next, idxA_next); // Triangle 2
+                    }
+                }
+
+                if (vertices.length === 0 || indices.length === 0) return;
+                geometry.setIndex(indices); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                try { geometry.computeVertexNormals(); } catch(e) { console.error("Error computing vertex normals", e, geometry)}
+                const segmentSurfaceMesh = new THREE.Mesh(geometry, sharedSurfaceMaterial); scene.add(segmentSurfaceMesh); surfaceMeshes.push(segmentSurfaceMesh);
+            });
+        }
         function drawCentroidPathVisual(centroid, axis) { clearCentroidPathVisual(); if (!centroid) return; const R = currentCentroidDistanceR; if (R < EPSILON) return; const points = []; const center = new THREE.Vector3(); let uAxis = new THREE.Vector3(); let vAxis = new THREE.Vector3(); switch (axis) { case 'x': center.set(centroid.x, 0, 0); uAxis.set(0, 1, 0); vAxis.set(0, 0, 1); break; case 'y': center.set(0, centroid.y, 0); uAxis.set(1, 0, 0); vAxis.set(0, 0, 1); break; case 'z': center.set(0, 0, centroid.z); uAxis.set(1, 0, 0); vAxis.set(0, 1, 0); break; } for (let i = 0; i <= CENTROID_PATH_SEGMENTS; i++) { const angle = (i / CENTROID_PATH_SEGMENTS) * Math.PI * 2; const point = new THREE.Vector3(); point.addScaledVector(uAxis, Math.cos(angle) * R); point.addScaledVector(vAxis, Math.sin(angle) * R); point.add(center); points.push(point); } const geometry = new THREE.BufferGeometry().setFromPoints(points); const material = new THREE.LineBasicMaterial({ color: CENTROID_PATH_COLOR, linewidth: 2 }); centroidPathVisual = new THREE.LineLoop(geometry, material); centroidPathVisual.renderOrder = 1; centroidPathVisual.visible = (revolutionAngle === 360); scene.add(centroidPathVisual); }
+
 
         // --- Update Cycle ---
         function updateVisualizationAndCalculations() {
-            parseSegmentsFromUI(); const polylineProps = calculatePolylineProperties(); const pappusValues = calculatePappusValues(polylineProps.totalLength, polylineProps.polylineCentroid, axisOfRotation);
-            currentTotalLength = polylineProps.totalLength; currentCentroidDistanceR = pappusValues.R;
-            totalLengthSpan.textContent = currentTotalLength.toFixed(3); if (currentTotalLength > 0) { centroidCoordsSpan.textContent = `(${polylineProps.polylineCentroid.x.toFixed(2)}, ${polylineProps.polylineCentroid.y.toFixed(2)}, ${polylineProps.polylineCentroid.z.toFixed(2)})`; centroidDistanceRSpan.textContent = currentCentroidDistanceR.toFixed(3); centroidDistanceDSpan.textContent = pappusValues.d.toFixed(3); surfaceAreaSpan.textContent = pappusValues.area.toFixed(3); } else { centroidCoordsSpan.textContent = "N/A"; centroidDistanceRSpan.textContent = "0.000"; centroidDistanceDSpan.textContent = "0.000"; surfaceAreaSpan.textContent = "0.000"; }
-            updateRealTimeCalculations();
-            clearSceneGeometry(); drawSegments(); drawSurfaceOfRevolution_Manual_PerSegment(); if (currentTotalLength > 0) { drawCentroidPathVisual(polylineProps.polylineCentroid, axisOfRotation); }
+            parseSegmentsFromUI();
+            const polylineProps = calculatePolylineProperties();
+            const pappusValues = calculatePappusValues(polylineProps.totalLength, polylineProps.polylineCentroid, axisOfRotation);
+
+            currentTotalLength = polylineProps.totalLength;
+            currentCentroidDistanceR = pappusValues.R;
+
+            // Update Calculation Display (Full values)
+            totalLengthSpan.textContent = currentTotalLength.toFixed(3);
+            if (currentTotalLength > 0) {
+                centroidCoordsSpan.textContent = `(${polylineProps.polylineCentroid.x.toFixed(2)}, ${polylineProps.polylineCentroid.y.toFixed(2)}, ${polylineProps.polylineCentroid.z.toFixed(2)})`;
+                centroidDistanceRSpan.textContent = currentCentroidDistanceR.toFixed(3);
+                centroidDistanceDSpan.textContent = pappusValues.d.toFixed(3);
+                surfaceAreaSpan.textContent = pappusValues.area.toFixed(3);
+            } else {
+                centroidCoordsSpan.textContent = "N/A";
+                centroidDistanceRSpan.textContent = "0.000";
+                centroidDistanceDSpan.textContent = "0.000";
+                surfaceAreaSpan.textContent = "0.000";
+            }
+
+            updateRealTimeCalculations(); // Update partial calculations based on current angle
+
+            // Update 3D Scene
+            clearSceneGeometry();
+            drawSegments();
+            drawSurfaceOfRevolution_Manual_PerSegment(); // Redraw surface with current angle
+            if (currentTotalLength > 0) {
+                drawCentroidPathVisual(polylineProps.polylineCentroid, axisOfRotation);
+                // Visibility handled in handleRevolutionSlider or here based on angle
+                if(centroidPathVisual) centroidPathVisual.visible = (Math.abs(revolutionAngle - 360) < EPSILON);
+            }
         }
 
         // --- Animation Loop ---
-        function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
 
         // --- Run ---
         init();
