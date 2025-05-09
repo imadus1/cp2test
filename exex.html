@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résumé: Tenseur d'Inertie - Segment de Disque</title>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true,
+            macros: {
+              vec: ['\\overrightarrow{#1}', 1],
+              mat: ['\\mathbf{#1}', 1]
+            }
+          },
+          options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+          }
+        };
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css">
+    <style>
+        body { font-family: "Computer Modern Sans", sans-serif; line-height: 1.6; margin: 1em; }
+        h1, h2, h3, h4 { color: #0056b3; font-family: "Computer Modern Sans", sans-serif; }
+        h1 { font-size: 1.8em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        h2 { font-size: 1.5em; margin-top: 1.5em; }
+        h3 { font-size: 1.2em; margin-top: 1.2em;}
+        h4 { font-size: 1.1em; margin-top: 1em; font-style: italic; color: #004080;}
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+        .mjx-math, mjx-container { font-size: 105% !important; text-align: left !important; }
+         mjx-container[display="true"] {
+             display: block;
+             margin: 1em 0;
+             overflow-x: visible; /* No scrollbar for math */
+         }
+         ul { padding-left: 20px; list-style-position: outside; }
+         ul ul { margin-top: 0.2em; margin-bottom: 0.2em; padding-left: 20px;}
+         .caption { text-align:center; margin-top: 0.5em; font-style: italic; }
+         .figure-placeholder { display: block; margin: 1em auto; max-width: 500px; width: 90%; min-height: 150px; border: 1px solid #ccc; text-align: center; padding-top: 20px; background-color: #f8f8f8; }
+        .figure-placeholder img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tenseur d'Inertie d'un Segment de Disque</h1>
+
+    <div class="figure-placeholder">
+        <img src="https://drive.google.com/drive-viewer/AKGpihY3nk3xJhJx97g-3e0My39v5Ak-mbPMPD0ULnAPGM9weiTDQ21PjIcypuzAr0EDfpV0fDJUOVEzmuUd2XdlsQs9RFghJSYtFkQ=w1920-h868" alt="Segment de disque et ses axes">
+        <!-- Remplacez IMAGE_PATH_PLACEHOLDER par le chemin réel de votre image -->
+    </div>
+    <p class="caption">FIGURE 1 - Segment de disque, son centre d'inertie G, et les repères.</p>
+
+    <h2>Description du Problème</h2>
+    <ul>
+        <li><strong>Corps :</strong> Segment de disque surfacique homogène (masse $M$, densité $\rho$).</li>
+        <li><strong>Géométrie :</strong>
+            <ul>
+                <li>Origine O(0,0,0), P(R,R,0).</li>
+                <li>Arc OP: sur cercle de centre C(0,R,0), rayon R (éq: $x^2 + (y-R)^2 = R^2$).</li>
+                <li>Segment: surface entre droite OP ($y=x$) et arc OP.</li>
+            </ul>
+        </li>
+        <li><strong>Centre d'inertie :</strong> G.</li>
+        <li><strong>Repère principal en G :</strong> $(G, \vec{x}', \vec{y}', \vec{z}')$
+            <ul>
+                <li>GZ' $\perp$ plan du segment (// OZ).</li>
+                <li>GX' axe de symétrie (// droite CP', P'(R,0,0), éq: $y=-x+R$).</li>
+                <li>GY' $\perp$ GX' dans le plan (// droite OP, éq: $y=x$).</li>
+            </ul>
+        </li>
+        <li><strong>Tenseur d'inertie en G (initial) :</strong>
+            $$ [I_G]_{GX'Y'Z'} = \begin{pmatrix} A_G & -D_G & -E_G \\ -D_G & B_G & -F_G \\ -E_G & -F_G & C_G \end{pmatrix} $$
+        </li>
+    </ul>
+    <h4>Objectifs :</h4>
+    <ol>
+        <li>Simplifier $[I_G]_{GX'Y'Z'}$ (symétrie).</li>
+        <li>Calculer $[I_G]_{GX''Y''Z''}$ (axes // OXYZ).</li>
+        <li>Calculer $(x_G, y_G)$ de G (Guldin, symétrie).</li>
+        <li>Calculer $[I_O]_{OXYZ}$.</li>
+    </ol>
+
+    <h2>Solution</h2>
+
+    <h3>1. Simplification de $[I_G]_{GX'Y'Z'}$ (Symétrie)</h3>
+    <ul>
+        <li>Corps plan ($z'=0$) $\implies E_G = \int x'z' dm = 0$, $F_G = \int y'z' dm = 0$.</li>
+        <li>GX' axe de symétrie, GY' $\perp$ GX' (dans le plan) $\implies$ axes principaux $\implies D_G = \int x'y' dm = 0$.</li>
+        <li>Corps plan ($z'=0$) $\implies C_G = I_{z'z'} = A_G + B_G$.</li>
+        <li>Tenseur simplifié :
+            $$ [I_G]_{GX'Y'Z'} = \begin{pmatrix} A_G & 0 & 0 \\ 0 & B_G & 0 \\ 0 & 0 & A_G+B_G \end{pmatrix} $$
+        </li>
+    </ul>
+
+    <h3>2. Calcul de $[I_G]_{GX''Y''Z''}$ (axes // OXYZ)</h3>
+    <ul>
+        <li>Rotation de GX'Y'Z' autour de GZ' (identique à GZ'') pour aligner GX'' // OX.
+            <ul>
+                <li>Angle entre GX' (// $y=-x+R$) et GX'' : $-45^\circ$.</li>
+                <li>Angle entre GY' (// $y=x$) et GX'' : $45^\circ$.</li>
+            </ul>
+        </li>
+        <li>Matrice de passage $P$ (de $(GX'Y'Z')$ vers $(GX''Y''Z'')$):
+            $$ P = \begin{pmatrix} \cos(-45^\circ) & \cos(45^\circ) & 0 \\ \sin(-45^\circ) & \sin(45^\circ) & 0 \\ 0 & 0 & 1 \end{pmatrix} = \begin{pmatrix} 1/\sqrt{2} & 1/\sqrt{2} & 0 \\ -1/\sqrt{2} & 1/\sqrt{2} & 0 \\ 0 & 0 & 1 \end{pmatrix} $$
+        </li>
+        <li>Transformation : $[I_G]_{GX''Y''Z''} = P [I_G]_{GX'Y'Z'} P^T$.
+            Avec $P^T = \begin{pmatrix} 1/\sqrt{2} & -1/\sqrt{2} & 0 \\ 1/\sqrt{2} & 1/\sqrt{2} & 0 \\ 0 & 0 & 1 \end{pmatrix}$.
+        </li>
+        <li>Partie 2x2 : $\begin{pmatrix} 1/\sqrt{2} & 1/\sqrt{2} \\ -1/\sqrt{2} & 1/\sqrt{2} \end{pmatrix} \begin{pmatrix} A_G & 0 \\ 0 & B_G \end{pmatrix} \begin{pmatrix} 1/\sqrt{2} & -1/\sqrt{2} \\ 1/\sqrt{2} & 1/\sqrt{2} \end{pmatrix} = \begin{pmatrix} (A_G+B_G)/2 & (-A_G+B_G)/2 \\ (-A_G+B_G)/2 & (A_G+B_G)/2 \end{pmatrix}$.
+        </li>
+        <li>Composantes dans GX''Y''Z'':
+            <ul>
+                <li>$A_G'' = (A_G+B_G)/2$</li>
+                <li>$B_G'' = (A_G+B_G)/2$</li>
+                <li>$-D_G'' = (-A_G+B_G)/2 \implies D_G'' = (A_G-B_G)/2$</li>
+                <li>$C_G'' = A_G+B_G$ (inchangé car rotation autour de Z')</li>
+            </ul>
+        </li>
+        <li>Tenseur dans $(G, \vec{x}'', \vec{y}'', \vec{z}'')$ :
+            $$ [I_G]_{GX''Y''Z''} = \begin{pmatrix} (A_G+B_G)/2 & -(A_G-B_G)/2 & 0 \\ -(A_G-B_G)/2 & (A_G+B_G)/2 & 0 \\ 0 & 0 & A_G+B_G \end{pmatrix} $$
+        </li>
+    </ul>
+
+    <h3>3. Coordonnées $(x_G, y_G)$ de G</h3>
+    <ul>
+        <li><strong>Aire du segment (S) :</strong>
+            <ul>
+                <li>S = Aire Secteur OCP (centre C(0,R)) - Aire Triangle OCP (O(0,0), C(0,R), P(R,R)).</li>
+                <li>$S_{Secteur\_OCP} = \frac{1}{4}\pi R^2$ (quart de cercle de rayon R).</li>
+                <li>$S_{Triangle\_OCP} = \frac{1}{2}R \cdot R = \frac{R^2}{2}$.</li>
+                <li>$S = \frac{\pi R^2}{4} - \frac{R^2}{2} = R^2\left(\frac{\pi-2}{4}\right)$.</li>
+            </ul>
+        </li>
+        <li><strong>Calcul de $x_G$ (Théorème de Guldin, rotation autour OY) :</strong>
+            <ul>
+                <li>Guldin: $V_{S/OY} = 2\pi x_G S$.</li>
+                <li>$V_{S/OY} = V_{Secteur\_OCP/OY} - V_{Triangle\_OCP/OY}$.
+                    <ul>
+                        <li>$V_{Secteur\_OCP/OY} = \frac{1}{2} (\frac{4}{3}\pi R^3) = \frac{2}{3}\pi R^3$ (demi-sphère).</li>
+                        <li>$V_{Triangle\_OCP/OY} = \frac{1}{3}\pi R^2 \cdot R = \frac{1}{3}\pi R^3$ (cône).</li>
+                    </ul>
+                </li>
+                <li>$V_{S/OY} = \frac{2}{3}\pi R^3 - \frac{1}{3}\pi R^3 = \frac{1}{3}\pi R^3$.</li>
+                <li>$x_G = \frac{V_{S/OY}}{2\pi S} = \frac{\pi R^3/3}{2\pi \cdot R^2(\frac{\pi-2}{4})} = \frac{2R}{3(\pi-2)}$.</li>
+            </ul>
+        </li>
+        <li><strong>Calcul de $y_G$ (Symétrie) :</strong>
+            <ul>
+                <li>G est sur l'axe de symétrie GX' (// droite CP': $y = -x+R$).</li>
+                <li>$y_G = -x_G + R = R - \frac{2R}{3(\pi-2)} = R \frac{3\pi-8}{3(\pi-2)}$.</li>
+            </ul>
+        </li>
+        <li>Coordonnées de G : $G = \left( R \frac{2}{3(\pi-2)}, R \frac{3\pi-8}{3(\pi-2)}, 0 \right)$.</li>
+    </ul>
+
+    <h3>4. Tenseur d'Inertie en O (repère OXYZ)</h3>
+    <ul>
+        <li>Théorème de Huygens : $[I_O]_{OXYZ} = [I_G]_{GX''Y''Z''} + M [I_{O/G}]$.
+            <ul>
+                <li>$M = \rho S = \rho R^2 (\frac{\pi-2}{4})$.</li>
+                <li>$[I_{O/G}]$ (masse M en G par rapport à O, $z_G=0$) :
+                    $$ [I_{O/G}] = M \begin{pmatrix} y_G^2 & -x_G y_G & 0 \\ -x_G y_G & x_G^2 & 0 \\ 0 & 0 & x_G^2+y_G^2 \end{pmatrix} $$
+                </li>
+            </ul>
+        </li>
+        <li>Composantes de $[I_O]_{OXYZ}$ :
+            <ul>
+                <li>$A_O = A_G'' + My_G^2 = \frac{A_G+B_G}{2} + My_G^2$.</li>
+                <li>$B_O = B_G'' + Mx_G^2 = \frac{A_G+B_G}{2} + Mx_G^2$.</li>
+                <li>$-D_O = -D_G'' - Mx_G y_G = -\left(\frac{A_G-B_G}{2}\right) - Mx_G y_G = -\left(\frac{A_G-B_G}{2} + Mx_G y_G\right)$.</li>
+                <li>$C_O = C_G'' + M(x_G^2+y_G^2) = (A_G+B_G) + M(x_G^2+y_G^2)$.</li>
+                <li>$E_O = 0, F_O = 0$ (car $z_G=0$ et corps plan).</li>
+            </ul>
+        </li>
+        <li>Tenseur d'inertie $[I_O]_{OXYZ}$ :
+        $$ [I_O]_{OXYZ} = \begin{pmatrix}
+        \frac{A_G+B_G}{2} + My_G^2 & -\left(\frac{A_G-B_G}{2} + Mx_G y_G\right) & 0 \\
+        -\left(\frac{A_G-B_G}{2} + Mx_G y_G\right) & \frac{A_G+B_G}{2} + Mx_G^2 & 0 \\
+        0 & 0 & (A_G+B_G) + M(x_G^2+y_G^2)
+        \end{pmatrix} $$
+        </li>
+    </ul>
+
+</body>
+</html>
